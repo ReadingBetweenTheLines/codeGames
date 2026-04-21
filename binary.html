@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brankas Biner - Mode Linear</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background-color: #020617; color: #10b981; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .top-bar { background: #1e293b; padding: 15px 25px; border-radius: 8px; margin-bottom: 20px; width: 100%; max-width: 850px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; box-sizing: border-box;}
+        .player-input { font-weight: bold; color: #38bdf8; display: flex; align-items: center;}
+        .player-input input { padding: 8px; border-radius: 4px; border: 1px solid #38bdf8; background: #0f172a; color: white; margin-left: 10px; font-family: inherit; font-size: 16px; outline: none;}
+
+        .container { background-color: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 30px; width: 100%; max-width: 850px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); display: flex; flex-direction: column; align-items: center; box-sizing: border-box;}
+        
+        /* HEADER BARU */
+        .header { width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #334155; padding-bottom: 15px; margin-bottom: 25px; }
+        .title { margin: 0; font-size: 24px; color: #38bdf8; text-transform: uppercase; letter-spacing: 2px; }
+        .level-badge { background: #1e293b; color: #fef08a; border: 1px solid #fef08a; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 16px; letter-spacing: 1px;}
+
+        .vault-screen { background-color: #000; border: 3px solid #10b981; border-radius: 8px; width: 100%; padding: 40px 20px; text-align: center; position: relative; box-sizing: border-box; box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.2); }
+        .target-label { font-size: 16px; color: #64748b; letter-spacing: 3px; }
+        .target-number { font-size: 80px; font-weight: bold; margin: 10px 0 0 0; text-shadow: 0 0 15px #10b981; }
+        .switches-container { display: flex; justify-content: center; gap: 15px; margin-top: 50px; margin-bottom: 40px; flex-wrap: wrap; }
+        .switch-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .bit-value { font-size: 18px; font-weight: bold; color: #475569; transition: all 0.3s; }
+        .bit-value.active { color: #10b981; text-shadow: 0 0 8px #10b981; transform: scale(1.2); }
+        .btn-switch { width: 55px; height: 75px; background-color: #1e293b; border: 2px solid #334155; border-radius: 8px; font-family: inherit; font-size: 36px; font-weight: bold; color: #64748b; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.5); }
+        .btn-switch.on { background-color: #10b981; border-color: #34d399; color: #020617; box-shadow: inset 0 4px 0 rgba(255,255,255,0.3), 0 0 15px rgba(16, 185, 129, 0.5); }
+        .btn-hack { background-color: #0ea5e9; color: #0f172a; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; font-family: inherit; border-radius: 6px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; }
+        .btn-hack:hover { background-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+        .btn-hack:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; background-color: #475569;}
+        #statusMsg { margin-top: 25px; font-size: 18px; font-weight: bold; min-height: 24px; text-align: center; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        .shake { animation: shake 0.4s; border-color: #ef4444 !important; color: #ef4444;}
+        @keyframes unlock { 0% { border-color: #10b981; } 50% { border-color: #fef08a; box-shadow: 0 0 40px #fef08a; } 100% { border-color: #10b981; } }
+        .unlocked { animation: unlock 1s; border-color: #fef08a !important;}
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="player-input">
+        👤 Identitas Siswa: 
+        <input type="text" id="playerName" placeholder="Ketik namamu..." onblur="savePlayerName()">
+    </div>
+    <div style="font-size: 12px; color: #64748b;">Terkoneksi ke Server Guru 📡</div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1 class="title">🔓 Brankas Biner</h1>
+        <div class="level-badge" id="levelDisplay">Level 1</div>
+    </div>
+
+    <div class="vault-screen" id="vaultScreen">
+        <div class="target-label">TARGET DESIMAL</div>
+        <div class="target-number" id="targetNum">0</div>
+    </div>
+
+    <div class="switches-container" id="switchesContainer"></div>
+
+    <button class="btn-hack" id="btnHack" onclick="attemptHack()">BUKA BRANKAS</button>
+    <div id="statusMsg"></div>
+</div>
+
+<script>
+    // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
+
+    const LEVELS = [
+        { title: "Level 1: Pemula (3-Bit)", bits: [4, 2, 1], target: 3 },
+        { title: "Level 2: Kombinasi Genap", bits: [4, 2, 1], target: 6 },
+        { title: "Level 3: Beban Penuh", bits: [4, 2, 1], target: 7 },
+        { title: "Level 4: Masuk ke 4-Bit", bits: [8, 4, 2, 1], target: 9 },
+        { title: "Level 5: Angka Belasan", bits: [8, 4, 2, 1], target: 12 },
+        { title: "Level 6: Angka Ganjil", bits: [8, 4, 2, 1], target: 11 },
+        { title: "Level 7: Maksimal 4-Bit", bits: [8, 4, 2, 1], target: 15 },
+        { title: "Level 8: Ruang 5-Bit", bits: [16, 8, 4, 2, 1], target: 18 },
+        { title: "Level 9: Kombinasi Tengah", bits: [16, 8, 4, 2, 1], target: 22 },
+        { title: "Level 10: Angka Prima", bits: [16, 8, 4, 2, 1], target: 29 },
+        { title: "Level 11: Nyaris Penuh", bits: [16, 8, 4, 2, 1], target: 27 },
+        { title: "Level 12: Area 6-Bit", bits: [32, 16, 8, 4, 2, 1], target: 34 },
+        { title: "Level 13: Celah Keamanan", bits: [32, 16, 8, 4, 2, 1], target: 45 },
+        { title: "Level 14: Angka Kembar", bits: [32, 16, 8, 4, 2, 1], target: 55 },
+        { title: "Level 15: Grand Master Hacker", bits: [32, 16, 8, 4, 2, 1], target: 61 },
+        { title: "Level 16: Gerbang 7-Bit", bits: [64, 32, 16, 8, 4, 2, 1], target: 65 }, 
+        { title: "Level 17: Tiga Digit Pertama", bits: [64, 32, 16, 8, 4, 2, 1], target: 100 }, 
+        { title: "Level 18: Logika Rumit", bits: [64, 32, 16, 8, 4, 2, 1], target: 115 }, 
+        { title: "Level 19: Hampir Penuh (7-Bit)", bits: [64, 32, 16, 8, 4, 2, 1], target: 126 }, 
+        { title: "Level 20: Memasuki 1 Byte!", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 130 }, 
+        { title: "Level 21: Pola Biner Zig-Zag", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 170 }, 
+        { title: "Level 22: Klub Dua Ratus", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 200 }, 
+        { title: "Level 23: Angka Misteri", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 213 }, 
+        { title: "Level 24: Pertahanan Ketat", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 240 }, 
+        { title: "Level 25: DEWA HACKER", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 254 } 
+    ];
+
+    let currentLevelIndex = 0;
+    let currentLevelData = null;
+    let switchStates = []; 
+    let currentSum = 0;
+    
+    let startTime = 0;
+    let failsCount = 0;
+
+    window.onload = function() {
+        let savedName = localStorage.getItem('globalPlayerName');
+        if(savedName) document.getElementById('playerName').value = savedName;
+        
+        loadLevel(0); // Langsung mulai dari Level 0
+    };
+
+    function savePlayerName() {
+        let name = document.getElementById('playerName').value.trim();
+        if(name) localStorage.setItem('globalPlayerName', name);
+    }
+
+    // Fungsi Langsung Lompat Level (Dipanggil oleh Tombol Lanjut)
+    function jumpToLevel(index) {
+        currentLevelIndex = parseInt(index);
+        loadLevel(currentLevelIndex);
+    }
+
+    function loadLevel(index) {
+        if (index >= LEVELS.length) {
+            alert("Luar Biasa! Anda telah menamatkan seluruh level!");
+            index = 0; currentLevelIndex = 0;
+        }
+
+        currentLevelData = LEVELS[index];
+        switchStates = new Array(currentLevelData.bits.length).fill(0);
+        
+        startTime = Date.now();
+        failsCount = 0;
+        
+        document.getElementById('targetNum').textContent = currentLevelData.target;
+        
+        // Update Teks Indikator Level
+        document.getElementById('levelDisplay').textContent = currentLevelData.title;
+        
+        document.getElementById('statusMsg').textContent = "";
+        
+        const btnHack = document.getElementById('btnHack');
+        btnHack.textContent = "BUKA BRANKAS";
+        btnHack.style.backgroundColor = "#0ea5e9";
+        btnHack.onclick = attemptHack;
+
+        document.getElementById('vaultScreen').classList.remove('shake', 'unlocked');
+
+        renderSwitches();
+        calculateState();
+    }
+
+    function renderSwitches() {
+        const container = document.getElementById('switchesContainer');
+        container.innerHTML = '';
+        currentLevelData.bits.forEach((bitValue, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'switch-wrapper';
+
+            const label = document.createElement('div');
+            label.className = 'bit-value';
+            label.id = `label-${index}`;
+            label.textContent = bitValue;
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-switch';
+            btn.id = `switch-${index}`;
+            btn.textContent = switchStates[index];
+            btn.onclick = () => toggleSwitch(index);
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(btn);
+            container.appendChild(wrapper);
+        });
+    }
+
+    function toggleSwitch(index) {
+        switchStates[index] = switchStates[index] === 0 ? 1 : 0;
+        const btn = document.getElementById(`switch-${index}`);
+        btn.textContent = switchStates[index];
+        if (switchStates[index] === 1) {
+            btn.classList.add('on');
+            document.getElementById(`label-${index}`).classList.add('active');
+        } else {
+            btn.classList.remove('on');
+            document.getElementById(`label-${index}`).classList.remove('active');
+        }
+        calculateState();
+    }
+
+    function calculateState() {
+        currentSum = 0;
+        for (let i = 0; i < currentLevelData.bits.length; i++) {
+            if (switchStates[i] === 1) currentSum += currentLevelData.bits[i];
+        }
+        document.getElementById('statusMsg').textContent = "";
+        document.getElementById('vaultScreen').classList.remove('shake');
+    }
+
+    function attemptHack() {
+        const vault = document.getElementById('vaultScreen');
+        const msg = document.getElementById('statusMsg');
+        
+        if (currentSum === currentLevelData.target) {
+            vault.classList.add('unlocked');
+            msg.textContent = "✅ Akses Diberikan! Kode Biner Diterima.";
+            msg.style.color = "#fef08a";
+            
+            sendDataToGuru(); 
+            
+            const btn = document.getElementById('btnHack');
+            btn.textContent = "LANJUT KE LEVEL BERIKUTNYA ➔";
+            btn.style.backgroundColor = "#10b981";
+            btn.onclick = () => jumpToLevel(currentLevelIndex + 1);
+        } else {
+            failsCount++; 
+            vault.classList.remove('shake');
+            void vault.offsetWidth; 
+            vault.classList.add('shake');
+            
+            msg.textContent = `❌ Akses Ditolak! Kombinasi biner salah.`;
+            msg.style.color = "#ef4444";
+        }
+    }
+
+    function sendDataToGuru() {
+        let playerName = document.getElementById('playerName').value.trim() || "Anonim";
+        let timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        let score = Math.max(10, 1000 - (timeTaken * 2) - (failsCount * 50));
+
+        let record = {
+            name: playerName,
+            gameName: "Brankas Biner", 
+            level: currentLevelData.title,
+            steps: 0, 
+            fails: failsCount,
+            deletions: 0,
+            time: timeTaken,
+            score: score
+        };
+
+        fetch(GOOGLE_SHEETS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(record)
+        }).catch(err => console.error(err));
+    }
+</script>
+</body>
+</html>

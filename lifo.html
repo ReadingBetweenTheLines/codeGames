@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menara Hanoi - Mode Linear</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: #334155; }
+        .top-bar { background: white; padding: 15px 25px; border-radius: 8px; margin-bottom: 20px; width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; border: 2px solid #e2e8f0; box-sizing: border-box;}
+        .player-input { font-weight: bold; color: #334155; display: flex; align-items: center;}
+        .player-input input { padding: 8px; border-radius: 4px; border: 1px solid #cbd5e1; margin-left: 10px; font-family: inherit; font-size: 16px; outline: none;}
+
+        .container { background-color: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); max-width: 900px; width: 100%; padding: 30px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;}
+        
+        /* HEADER BARU */
+        .header { text-align: center; width: 100%; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; color: #0f172a; }
+        .controls { display: flex; justify-content: center; gap: 15px; align-items: center; }
+        .level-badge { background: #e0e7ff; color: #4338ca; border: 2px solid #a5b4fc; padding: 10px 15px; border-radius: 6px; font-weight: bold; font-size: 16px; }
+        
+        button { padding: 10px 15px; font-size: 15px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; outline: none; transition: background 0.2s; }
+        .btn-restart { background-color: #ef4444; color: white; border: 2px solid #dc2626; }
+        .btn-restart:hover { background-color: #b91c1c; }
+        .btn-hint { background-color: #f59e0b; color: white; border: 2px solid #d97706;}
+        .btn-hint:hover { background-color: #b45309; }
+        
+        .info-panel { width: 100%; background-color: #f1f5f9; border-left: 5px solid #3b82f6; padding: 15px; border-radius: 6px; margin-bottom: 30px; box-sizing: border-box; }
+        .rules { margin: 0 0 10px 0; padding-left: 20px; }
+        .secret-pattern { display: none; background-color: #fffbeb; border: 1px dashed #f59e0b; padding: 15px; border-radius: 6px; margin-top: 15px; color: #b45309; font-weight: bold; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .game-board { display: flex; justify-content: space-around; width: 100%; height: 250px; margin-bottom: 40px; align-items: flex-end; }
+        .peg-container { width: 30%; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; cursor: pointer; border-radius: 8px; transition: background 0.2s; }
+        .peg-container:hover { background-color: #f8fafc; }
+        .peg-container.selected { background-color: #e0f2fe; }
+        .peg { position: absolute; bottom: 15px; width: 14px; height: 200px; background-color: #8b5cf6; border-radius: 10px 10px 0 0; z-index: 1; }
+        .base { width: 100%; height: 15px; background-color: #6d28d9; border-radius: 8px; z-index: 2; }
+        .peg-label { position: absolute; bottom: -30px; font-weight: bold; color: #64748b; }
+        .rings-wrapper { position: absolute; bottom: 15px; width: 100%; display: flex; flex-direction: column-reverse; align-items: center; z-index: 3; pointer-events: none; }
+        .ring { height: 30px; border-radius: 15px; margin-bottom: 2px; border: 2px solid rgba(0,0,0,0.2); box-shadow: inset 0 3px 6px rgba(255,255,255,0.4), 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s; }
+        .ring.levitate { transform: translateY(-150px); box-shadow: 0 15px 20px rgba(0,0,0,0.3); }
+        .ring-6 { width: 90%; background-color: #ef4444; } .ring-5 { width: 75%; background-color: #f97316; } .ring-4 { width: 60%; background-color: #eab308; } .ring-3 { width: 45%; background-color: #22c55e; } .ring-2 { width: 30%; background-color: #0ea5e9; } .ring-1 { width: 15%; background-color: #a855f7; } 
+        .stats { display: flex; width: 100%; justify-content: center; background-color: #f8fafc; padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 20px; font-weight: bold; box-sizing: border-box; text-align: center; }
+        .moves-count { color: #3b82f6; font-size: 28px; margin-left: 10px;}
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 450px; }
+        .modal-content h2 { color: #10b981; margin-top: 0; font-size: 28px; }
+        .modal-content p { font-size: 18px; margin-bottom: 20px; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+        .error-shake { animation: shake 0.4s; background-color: #fee2e2 !important; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="player-input">
+        👤 Identitas Siswa: 
+        <input type="text" id="playerName" placeholder="Ketik namamu..." onblur="savePlayerName()">
+    </div>
+    <div style="font-size: 12px; color: #64748b; font-weight: bold;">Terkoneksi ke Server Guru 📡</div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>🗼 Menara Hanoi</h1>
+        <div class="controls">
+            <div class="level-badge" id="levelDisplay">Level 1: 3 Cincin</div>
+            <button class="btn-restart" onclick="restartCurrentLevel()">🔄 Ulangi Level</button>
+            <button class="btn-hint" onclick="toggleHint()">💡 Pola Rahasia</button>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h3 style="margin-top:0;">📜 Aturan Main:</h3>
+        <ul class="rules">
+            <li>Pindahkan semua cincin ke <b>Tiang Tujuan (Kanan)</b>.</li>
+            <li>Hanya boleh memindahkan <b>1 cincin</b> teratas dalam satu waktu.</li>
+            <li>⛔ <b>Cincin Besar TIDAK BOLEH</b> diletakkan di atas cincin yang lebih kecil.</li>
+        </ul>
+        <div class="secret-pattern" id="secretPattern">
+            🕵️‍♂️ <b>Pola Berpikir Komputer (Algoritma):</b><br><br>
+            Jangan bingung melihat banyak cincin. Lakukan 3 langkah ini terus-menerus:<br>
+            1. Pindahkan tumpukan kecil di atasnya ke "Tiang Bantuan" (Tengah).<br>
+            2. Pindahkan Cincin Paling Besar (di dasar) ke "Tiang Tujuan" (Kanan).<br>
+            3. Pindahkan tumpukan kecil dari Tiang Bantuan tadi ke atas Cincin Besar di Tiang Tujuan.<br>
+            <i>Eksplorasi saja, tidak ada batasan langkah!</i>
+        </div>
+    </div>
+
+    <div class="game-board">
+        <div class="peg-container" id="peg-0" onclick="handlePegClick(0)">
+            <div class="peg"></div><div class="base"></div><div class="peg-label">Asal</div>
+            <div class="rings-wrapper" id="rings-0"></div>
+        </div>
+        <div class="peg-container" id="peg-1" onclick="handlePegClick(1)">
+            <div class="peg"></div><div class="base"></div><div class="peg-label">Bantuan</div>
+            <div class="rings-wrapper" id="rings-1"></div>
+        </div>
+        <div class="peg-container" id="peg-2" onclick="handlePegClick(2)">
+            <div class="peg"></div><div class="base"></div><div class="peg-label">Tujuan</div>
+            <div class="rings-wrapper" id="rings-2"></div>
+        </div>
+    </div>
+
+    <div class="stats">
+        Jejak Langkah Anda: <span class="moves-count" id="movesCount">0</span>
+    </div>
+</div>
+
+<div class="modal" id="winModal">
+    <div class="modal-content">
+        <h2>🎉 Sempurna!</h2>
+        <p>Anda berhasil memindahkan seluruh menara dengan susunan yang benar.</p>
+        <p>Total Jejak Langkah: <strong id="finalMoves" style="color:#3b82f6; font-size:26px;">0</strong></p>
+        <button style="background:#10b981; color:white; padding:15px 30px; margin-top:10px;" onclick="loadNextLevel()">Lanjut ke Level Berikutnya ➔</button>
+    </div>
+</div>
+
+<script>
+    // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
+
+    // DATABASE LEVEL LINEAR
+    const LEVELS = [
+        { rings: 3, name: "Level 1 (Pemula)" },
+        { rings: 4, name: "Level 2 (Menengah)" },
+        { rings: 5, name: "Level 3 (Sulit)" },
+        { rings: 6, name: "Level 4 (Sangat Sulit)" }
+    ];
+
+    let currentLevelIndex = 0;
+    let numRings = LEVELS[0].rings;
+    
+    let pegs = [[], [], []]; 
+    let moves = 0;
+    let selectedPegIndex = null; 
+    let isGameOver = false;
+    let startTime = 0;
+
+    window.onload = function() {
+        let savedName = localStorage.getItem('globalPlayerName');
+        if(savedName) document.getElementById('playerName').value = savedName;
+        loadLevel(0);
+    };
+
+    function savePlayerName() {
+        let name = document.getElementById('playerName').value.trim();
+        if(name) localStorage.setItem('globalPlayerName', name);
+    }
+
+    function toggleHint() {
+        const hint = document.getElementById('secretPattern');
+        hint.style.display = hint.style.display === 'block' ? 'none' : 'block';
+    }
+    
+    function restartCurrentLevel() {
+        loadLevel(currentLevelIndex);
+    }
+
+    // FUNGSI LOAD LEVEL BARU
+    function loadLevel(index) {
+        if (index >= LEVELS.length) {
+            alert("Luar Biasa! Anda telah menamatkan seluruh level Menara Hanoi!");
+            index = 0; 
+        }
+        
+        currentLevelIndex = index;
+        numRings = LEVELS[index].rings;
+        
+        document.getElementById('levelDisplay').textContent = LEVELS[index].name + ": " + numRings + " Cincin";
+        
+        pegs = [[], [], []];
+        moves = 0;
+        selectedPegIndex = null;
+        isGameOver = false;
+        startTime = Date.now();
+        
+        for (let i = numRings; i >= 1; i--) {
+            pegs[0].push(i);
+        }
+
+        document.getElementById('movesCount').textContent = moves;
+        renderBoard();
+    }
+    
+    function loadNextLevel() {
+        document.getElementById('winModal').style.display = 'none';
+        loadLevel(currentLevelIndex + 1);
+    }
+
+    function renderBoard() {
+        for (let i = 0; i < 3; i++) {
+            document.getElementById(`peg-${i}`).classList.remove('selected');
+            const ringsWrapper = document.getElementById(`rings-${i}`);
+            ringsWrapper.innerHTML = '';
+            
+            pegs[i].forEach((ringSize, ringIndex) => {
+                const ringEl = document.createElement('div');
+                ringEl.className = `ring ring-${ringSize}`;
+                
+                if (selectedPegIndex === i && ringIndex === pegs[i].length - 1) {
+                    ringEl.classList.add('levitate');
+                }
+                
+                ringsWrapper.appendChild(ringEl);
+            });
+        }
+        
+        if (selectedPegIndex !== null) {
+            document.getElementById(`peg-${selectedPegIndex}`).classList.add('selected');
+        }
+    }
+
+    function handlePegClick(clickedIndex) {
+        if (isGameOver) return;
+        const clickedPeg = document.getElementById(`peg-${clickedIndex}`);
+
+        if (selectedPegIndex === null) {
+            if (pegs[clickedIndex].length > 0) {
+                selectedPegIndex = clickedIndex; 
+                renderBoard();
+            }
+            return;
+        }
+
+        if (selectedPegIndex === clickedIndex) {
+            selectedPegIndex = null; 
+            renderBoard();
+            return;
+        }
+
+        const ringToMove = pegs[selectedPegIndex][pegs[selectedPegIndex].length - 1]; 
+        const targetPegTopRing = pegs[clickedIndex].length > 0 ? pegs[clickedIndex][pegs[clickedIndex].length - 1] : null;
+
+        if (targetPegTopRing === null || ringToMove < targetPegTopRing) {
+            pegs[selectedPegIndex].pop(); 
+            pegs[clickedIndex].push(ringToMove); 
+            
+            moves++;
+            document.getElementById('movesCount').textContent = moves;
+            selectedPegIndex = null; 
+            
+            renderBoard();
+            checkWin();
+        } else {
+            clickedPeg.classList.remove('error-shake');
+            void clickedPeg.offsetWidth; 
+            clickedPeg.classList.add('error-shake');
+        }
+    }
+
+    function checkWin() {
+        if (pegs[2].length === numRings) {
+            isGameOver = true;
+            document.getElementById('finalMoves').textContent = moves;
+            document.getElementById('winModal').style.display = 'flex';
+            
+            sendDataToGuru();
+        }
+    }
+
+    function sendDataToGuru() {
+        let playerName = document.getElementById('playerName').value.trim() || "Anonim";
+        let timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        
+        let minMoves = Math.pow(2, numRings) - 1;
+        let extraMoves = Math.max(0, moves - minMoves);
+        let score = Math.max(10, 1000 - (timeTaken * 2) - (extraMoves * 10));
+
+        let record = {
+            name: playerName,
+            gameName: "Menara Hanoi", 
+            level: LEVELS[currentLevelIndex].name,
+            steps: moves, 
+            fails: 0, 
+            deletions: 0,
+            time: timeTaken,
+            score: score
+        };
+
+        fetch(GOOGLE_SHEETS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(record)
+        }).catch(err => console.error(err));
+    }
+</script>
+</body>
+</html>
