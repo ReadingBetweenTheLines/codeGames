@@ -104,43 +104,72 @@
 </head>
 <body>
 
+<body>
+
 <header>
     <h1>🎮 Portal Logika Komputer</h1>
-    <p>Pilih tantanganmu dan kumpulkan skor tertinggi!</p>
+    <p>Silakan isi namamu sebelum memulai tantangan!</p>
+    
+    <div style="margin-top: 20px;">
+        <input type="text" id="globalNameInput" placeholder="Ketik Nama Lengkap..." 
+               style="padding: 12px 20px; font-size: 18px; border-radius: 8px; border: none; width: 300px; text-align: center; font-weight: bold; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+    </div>
 </header>
 
 <div class="container">
-    <a href="jalur_kancil.html" class="game-card">
+    <a href="#" onclick="checkName('Kancil.html')" class="game-card">
         <div>
             <span class="icon">🧭</span>
             <h2>Jalur Kancil</h2>
-            <p>Belajar algoritma sekuensial dan perulangan dengan memandu Kancil melewati rintangan.</p>
+            <p>Belajar algoritma sekuensial dengan memandu Kancil melewati rintangan.</p>
         </div>
         <span class="btn-play">Main Sekarang</span>
     </a>
 
-    <a href="brankas_biner.html" class="game-card">
+    <a href="#" onclick="checkName('brankas_biner.html')" class="game-card">
         <div>
             <span class="icon">🔓</span>
             <h2>Brankas Biner</h2>
-            <p>Retas brankas digital dengan memahami cara komputer menyimpan angka (0 dan 1).</p>
+            <p>Pahami cara komputer menyimpan angka melalui kode biner 0 dan 1.</p>
         </div>
         <span class="btn-play">Main Sekarang</span>
     </a>
 
-    <a href="menara_hanoi.html" class="game-card">
+    <a href="#" onclick="checkName('menara_hanoi.html')" class="game-card">
         <div>
             <span class="icon">🗼</span>
             <h2>Menara Hanoi</h2>
-            <p>Latih kemampuan pemecahan masalah kompleks menggunakan metode rekursi.</p>
+            <p>Latih kemampuan pemecahan masalah kompleks dengan metode rekursi.</p>
         </div>
         <span class="btn-play">Main Sekarang</span>
     </a>
 </div>
 
-<footer>
-    <a href="dashboard_guru.html" class="admin-link">Dashboard Guru (Akses Terbatas)</a>
-</footer>
+<script>
+    // Load nama jika sebelumnya sudah pernah mengetik
+    window.onload = function() {
+        const savedName = localStorage.getItem('globalPlayerName');
+        if(savedName) document.getElementById('globalNameInput').value = savedName;
+    }
+
+    // Simpan nama setiap kali siswa mengetik
+    document.getElementById('globalNameInput').addEventListener('input', function(e) {
+        localStorage.setItem('globalPlayerName', e.target.value.trim());
+    });
+
+    // Fungsi Validasi: Jangan biarkan masuk jika nama kosong
+    function checkName(targetUrl) {
+        const name = document.getElementById('globalNameInput').value.trim();
+        if (name === "") {
+            alert("⚠️ Eits! Isi namamu dulu ya sebelum bermain.");
+            document.getElementById('globalNameInput').focus();
+        } else {
+            window.location.href = targetUrl;
+        }
+    }
+</script>
+
+</body>
 
 </body>
 </html>

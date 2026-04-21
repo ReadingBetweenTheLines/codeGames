@@ -51,9 +51,9 @@
 <body>
 
 <div class="top-bar">
-    <div class="player-input">
-        👤 Identitas Siswa: 
-        <input type="text" id="playerName" placeholder="Ketik namamu..." onblur="savePlayerName()">
+   <div class="player-input">
+    👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px;">-</span>
+    <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px;">(Ganti Nama)</a>
     </div>
     <div style="font-size: 12px; color: #64748b;">Terkoneksi ke Server Guru 📡</div>
 </div>
@@ -116,10 +116,20 @@
     let failsCount = 0;
 
     window.onload = function() {
-        let savedName = localStorage.getItem('globalPlayerName');
-        if(savedName) document.getElementById('playerName').value = savedName;
-        
-        loadLevel(0); // Langsung mulai dari Level 0
+    // Ambil nama dari portal utama
+    const savedName = localStorage.getItem('globalPlayerName');
+    
+    // Jika nama tidak ada (anak nakal langsung buka link game), tendang balik ke index
+    if (!savedName || savedName === "") {
+        alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById('displayName').textContent = savedName;
+    }
+
+    // Panggil fungsi init game Anda di bawah ini
+    if(typeof initGame === 'function') initGame();
+    if(typeof loadLevel === 'function') loadLevel(0);
     };
 
     function savePlayerName() {
@@ -237,7 +247,7 @@
     }
 
     function sendDataToGuru() {
-        let playerName = document.getElementById('playerName').value.trim() || "Anonim";
+        let playerName = document.getElementById('displayName').textContent;
         let timeTaken = Math.floor((Date.now() - startTime) / 1000);
         let score = Math.max(10, 1000 - (timeTaken * 2) - (failsCount * 50));
 
