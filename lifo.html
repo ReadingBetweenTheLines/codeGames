@@ -47,6 +47,19 @@
         .modal-content p { font-size: 18px; margin-bottom: 20px; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
         .error-shake { animation: shake 0.4s; background-color: #fee2e2 !important; }
+
+        /* KODE RESPONSIF UNTUK HP */
+        @media (max-width: 600px) {
+            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .player-input { flex-direction: column; width: 100%; }
+            .player-input input { margin-left: 0; margin-top: 10px; width: 100%; box-sizing: border-box; }
+            .header { flex-direction: column; gap: 15px; }
+            .controls { flex-direction: column; width: 100%; }
+            .controls button, .level-badge { width: 100%; box-sizing: border-box; text-align: center; }
+            .game-board { height: 200px; }
+            .peg { height: 160px; }
+            .stats { font-size: 16px; flex-direction: column; }
+        }
     </style>
 </head>
 <body>

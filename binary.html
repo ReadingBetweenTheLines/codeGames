@@ -34,6 +34,18 @@
         .shake { animation: shake 0.4s; border-color: #ef4444 !important; color: #ef4444;}
         @keyframes unlock { 0% { border-color: #10b981; } 50% { border-color: #fef08a; box-shadow: 0 0 40px #fef08a; } 100% { border-color: #10b981; } }
         .unlocked { animation: unlock 1s; border-color: #fef08a !important;}
+
+        /* KODE RESPONSIF UNTUK HP */
+        @media (max-width: 600px) {
+            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .player-input { flex-direction: column; width: 100%; }
+            .player-input input { margin-left: 0; margin-top: 10px; width: 100%; box-sizing: border-box; }
+            .header { flex-direction: column; gap: 15px; }
+            .target-number { font-size: 60px; }
+            .btn-switch { width: 42px; height: 60px; font-size: 24px; }
+            .switches-container { gap: 8px; }
+            .btn-hack { width: 100%; }
+        }
     </style>
 </head>
 <body>
