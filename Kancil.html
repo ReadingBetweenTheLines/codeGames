@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jalur Kancil - Mode Linear</title>
+    <title>Jalur Kancil - Mode Linear (25 Level)</title>
     <style>
         :root {
             --grid-size: 5; 
@@ -36,30 +36,9 @@
         .player-input {
             display: flex;
             align-items: center;
-            gap: 10px;
             font-weight: bold;
             color: #334155;
         }
-        .player-input input {
-            padding: 8px 12px;
-            font-size: 16px;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .player-input input:focus { border-color: #3b82f6; }
-        .btn-leaderboard {
-            background-color: #f59e0b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .btn-leaderboard:hover { background-color: #d97706; }
 
         .container {
             display: flex;
@@ -176,44 +155,26 @@
         #message { font-weight: bold; text-align: center; min-height: 24px; margin-top: 15px; font-size: 16px; }
         .win { color: #10b981; } .lose { color: #ef4444; }
 
-        /* CSS UNTUK MODAL PAPAN PERINGKAT */
+        /* CSS UNTUK MODAL KEMENANGAN AKHIR */
         .modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
             align-items: center; justify-content: center; z-index: 1000;
         }
         .modal-content {
-            background: white; width: 90%; max-width: 700px; border-radius: 12px;
-            padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto;
+            background: white; width: 90%; max-width: 500px; border-radius: 12px;
+            padding: 40px 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
-        .modal-header h2 { margin: 0; color: #334155; }
-        .close-btn { background: #ef4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
-        
-        .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .leaderboard-table th, .leaderboard-table td { padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0; }
-        .leaderboard-table th { background-color: #f8fafc; color: #475569; position: sticky; top: 0;}
-        .leaderboard-table tr:hover { background-color: #f1f5f9; }
-        .rank-1 { font-weight: bold; color: #d97706; font-size: 1.1em; } /* Emas */
-        
-        .stat-badge {
-            display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;
-        }
-        .badge-red { background: #fee2e2; color: #b91c1c; }
-        .badge-blue { background: #dbeafe; color: #1d4ed8; }
-        .badge-green { background: #d1fae5; color: #047857; }
 
         /* KODE RESPONSIF UNTUK HP */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .top-bar { flex-direction: column; gap: 10px; text-align: center; }
             .player-input { flex-direction: column; width: 100%; }
-            .player-input input { margin-left: 0; margin-top: 10px; width: 100%; box-sizing: border-box; }
             .container { flex-direction: column; padding: 15px; gap: 20px; }
             .game-area { min-width: 100%; width: 100%; }
             .controls { width: 100%; }
             .scoreboard { width: 100%; box-sizing: border-box; flex-direction: column; gap: 10px;}
             
-            /* Menyulap papan statis menjadi karet */
             .board { 
                 width: 100%; max-width: 350px; height: auto; aspect-ratio: 1/1; 
                 grid-template-columns: repeat(var(--grid-size), 1fr) !important;
@@ -227,16 +188,16 @@
 
 <div class="top-bar">
     <div class="player-input">
-    👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px;">-</span>
-    <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px;">(Ganti Nama)</a>
+        👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px; margin-left: 10px;">-</span>
+        <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px; color: #64748b;">(Ganti Nama)</a>
     </div>
-    <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 Papan Peringkat (Lokal)</button>
+    <div style="font-size: 12px; color: #64748b; font-weight: bold;">Terkoneksi ke Server Guru 📡</div>
 </div>
 
 <div class="container">
     <div class="game-area">
         <div class="header-area">
-            <h2 class="level-title" id="levelTitle">Jalur Kancil 🧭</h2>
+            <h2 class="level-title">Jalur Kancil 🧭</h2>
             <div class="level-badge" id="levelDisplay">Memuat Level...</div>
         </div>
 
@@ -280,63 +241,53 @@
     </div>
 </div>
 
-<div id="leaderboardModal" class="modal-overlay">
+<div id="completionModal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>🏆 Analitik & Papan Peringkat Kelas</h2>
-            <button class="close-btn" onclick="hideLeaderboard()">X</button>
-        </div>
-        <div style="text-align: center; margin-bottom: 10px;">
-            <select id="leaderboardLevelFilter" onchange="renderLeaderboardTable()" style="width: 50%;">
-                <option value="ALL">Semua Level</option>
-                </select>
-        </div>
-        <table class="leaderboard-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Nama Siswa</th>
-                    <th>Level</th>
-                    <th>Langkah</th>
-                    <th>Gagal/Nabrak</th>
-                    <th>Hapus Kode</th>
-                    <th>Waktu</th>
-                    <th>Skor Akhir</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboardBody">
-                </tbody>
-        </table>
-        <div style="margin-top: 15px; text-align: right;">
-            <button onclick="clearLeaderboard()" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 5px 10px; font-size: 12px; cursor: pointer;">Kosongkan Data (Guru)</button>
-        </div>
+        <h1 style="color: #10b981; margin-top: 0; font-size: 36px;">🎉 TAMAT! 🎉</h1>
+        <p style="font-size: 18px; color: #334155;">Luar biasa! Kamu telah menguasai logika sekuensial dan menyelesaikan 25 level Jalur Kancil.</p>
+        <p style="color: #64748b;">Sekarang saatnya menghadapi tantangan berikutnya...</p>
+        <button onclick="window.location.href='brankas_biner.html'" 
+                style="background: #3b82f6; color: white; padding: 15px 30px; font-size: 18px; margin-top: 20px; border-radius: 8px; width: 100%;">
+            MAINKAN BRANKAS BINER ➔
+        </button>
     </div>
 </div>
 
 <script>
+    // MASUKKAN URL GOOGLE APPS SCRIPT DI SINI
+    const GOOGLE_SHEETS_URL = "URL_WEB_APP_ANDA_DISINI";
+
     const LEVELS = [
-        // LEVEL 1-5
+        // LEVEL 1-5 (Dasar)
         { title: "Level 1: Lurus & Belok", size: 5, start: { x: 0, y: 0, dir: 'E' }, target: { x: 4, y: 4 }, obstacles: [{ x: 2, y: 0, type: 'rock' }, { x: 2, y: 1, type: 'rock' }] },
         { title: "Level 2: Lorong Sempit", size: 5, start: { x: 0, y: 4, dir: 'E' }, target: { x: 4, y: 0 }, obstacles: [{ x: 2, y: 4, type: 'rock' }, { x: 2, y: 3, type: 'rock' }, { x: 2, y: 2, type: 'rock' }, { x: 4, y: 2, type: 'rock' }, { x: 3, y: 2, type: 'rock' }] },
         { title: "Level 3: Awas Air", size: 6, start: { x: 0, y: 0, dir: 'E' }, target: { x: 5, y: 5 }, obstacles: [{ x: 0, y: 3, type: 'water' }, { x: 1, y: 3, type: 'water' }, { x: 3, y: 3, type: 'water' }, { x: 4, y: 3, type: 'water' }, { x: 5, y: 3, type: 'water' }] },
         { title: "Level 4: Salah Arah", size: 6, start: { x: 5, y: 5, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 2, y: 2, type: 'croc' }, { x: 2, y: 3, type: 'rock' }, { x: 3, y: 2, type: 'rock' }, { x: 3, y: 3, type: 'croc' }] },
         { title: "Level 5: Memutar Balik", size: 6, start: { x: 0, y: 0, dir: 'E' }, target: { x: 3, y: 3 }, obstacles: [{ x: 2, y: 2, type: 'rock' }, { x: 3, y: 2, type: 'rock' }, { x: 4, y: 2, type: 'rock' }, { x: 2, y: 3, type: 'rock' }, { x: 2, y: 4, type: 'rock' }, { x: 3, y: 4, type: 'rock' }, { x: 4, y: 4, type: 'rock' }] },
-        // LEVEL 6-10
-        { title: "Level 6: Pola ZigZag", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, obstacles: [{ x: 0, y: 2, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 3, y: 2, type: 'rock' },{ x: 4, y: 2, type: 'rock' },{ x: 2, y: 4, type: 'rock' },{ x: 3, y: 4, type: 'rock' },{ x: 4, y: 4, type: 'rock' },{ x: 5, y: 4, type: 'rock' },{ x: 6, y: 4, type: 'rock' }] },
-        { title: "Level 7: Tepi Terlarang", size: 7, start: { x: 3, y: 6, dir: 'N' }, target: { x: 3, y: 0 }, obstacles: [{ x: 0, y: 1, type: 'water' },{ x: 0, y: 2, type: 'water' },{ x: 1, y: 0, type: 'water' },{ x: 6, y: 1, type: 'croc' },{ x: 6, y: 2, type: 'croc' },{ x: 5, y: 0, type: 'croc' },{ x: 1, y: 3, type: 'rock' },{ x: 2, y: 3, type: 'rock' },{ x: 4, y: 3, type: 'rock' },{ x: 5, y: 3, type: 'rock' }] },
-        { title: "Level 8: Ular Tangga", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 2, y: 1, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 2, y: 3, type: 'rock' },{ x: 2, y: 4, type: 'rock' },{ x: 2, y: 5, type: 'rock' },{ x: 2, y: 6, type: 'rock' },{ x: 5, y: 1, type: 'rock' },{ x: 5, y: 2, type: 'rock' },{ x: 5, y: 3, type: 'rock' },{ x: 5, y: 4, type: 'rock' },{ x: 5, y: 5, type: 'rock' },{ x: 5, y: 6, type: 'rock' },{ x: 5, y: 7, type: 'rock' }] },
-        { title: "Level 9: Jembatan Kritis", size: 8, start: { x: 0, y: 4, dir: 'E' }, target: { x: 7, y: 4 }, obstacles: [{ x: 3, y: 0, type: 'water' },{ x: 3, y: 1, type: 'water' },{ x: 3, y: 2, type: 'water' },{ x: 3, y: 4, type: 'water' },{ x: 3, y: 5, type: 'water' },{ x: 3, y: 6, type: 'water' },{ x: 3, y: 7, type: 'water' },{ x: 5, y: 0, type: 'croc' },{ x: 5, y: 1, type: 'croc' },{ x: 5, y: 2, type: 'croc' },{ x: 5, y: 3, type: 'croc' },{ x: 5, y: 5, type: 'croc' },{ x: 5, y: 6, type: 'croc' },{ x: 5, y: 7, type: 'croc' }] },
-        { title: "Level 10: Rawa Buntu", size: 8, start: { x: 7, y: 7, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 6, type: 'water' },{ x: 2, y: 6, type: 'water' },{ x: 3, y: 6, type: 'water' },{ x: 4, y: 6, type: 'water' },{ x: 5, y: 6, type: 'water' },{ x: 6, y: 6, type: 'water' },{ x: 7, y: 6, type: 'water' },{ x: 0, y: 2, type: 'croc' },{ x: 1, y: 2, type: 'croc' },{ x: 2, y: 2, type: 'croc' },{ x: 3, y: 2, type: 'croc' },{ x: 4, y: 2, type: 'croc' },{ x: 5, y: 2, type: 'croc' },{ x: 6, y: 2, type: 'croc' }] },
-        // LEVEL 11-15
-        { title: "Level 11: Labirin Lapis Dua", size: 9, start: { x: 0, y: 0, dir: 'E' }, target: { x: 4, y: 4 }, obstacles: [{ x: 1, y: 1, type: 'rock' },{ x: 2, y: 1, type: 'rock' },{ x: 3, y: 1, type: 'rock' },{ x: 4, y: 1, type: 'rock' },{ x: 5, y: 1, type: 'rock' },{ x: 6, y: 1, type: 'rock' },{ x: 7, y: 1, type: 'rock' },{ x: 7, y: 2, type: 'rock' },{ x: 7, y: 3, type: 'rock' },{ x: 7, y: 4, type: 'rock' },{ x: 7, y: 5, type: 'rock' },{ x: 7, y: 6, type: 'rock' },{ x: 7, y: 7, type: 'rock' },{ x: 1, y: 7, type: 'rock' },{ x: 2, y: 7, type: 'rock' },{ x: 3, y: 7, type: 'rock' },{ x: 4, y: 7, type: 'rock' },{ x: 5, y: 7, type: 'rock' },{ x: 6, y: 7, type: 'rock' },{ x: 1, y: 3, type: 'rock' },{ x: 1, y: 4, type: 'rock' },{ x: 1, y: 5, type: 'rock' },{ x: 1, y: 6, type: 'rock' },{ x: 3, y: 3, type: 'croc' },{ x: 4, y: 3, type: 'croc' },{ x: 5, y: 3, type: 'croc' },{ x: 5, y: 4, type: 'croc' },{ x: 5, y: 5, type: 'croc' },{ x: 3, y: 5, type: 'croc' },{ x: 4, y: 5, type: 'croc' }] },
-        { title: "Level 12: Ular Vertikal", size: 10, start: { x: 0, y: 0, dir: 'E' }, target: { x: 9, y: 9 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 2, y: 1, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 2, y: 3, type: 'rock' },{ x: 2, y: 4, type: 'rock' },{ x: 2, y: 5, type: 'rock' },{ x: 2, y: 6, type: 'rock' },{ x: 2, y: 7, type: 'rock' },{ x: 2, y: 8, type: 'rock' },{ x: 5, y: 1, type: 'water' },{ x: 5, y: 2, type: 'water' },{ x: 5, y: 3, type: 'water' },{ x: 5, y: 4, type: 'water' },{ x: 5, y: 5, type: 'water' },{ x: 5, y: 6, type: 'water' },{ x: 5, y: 7, type: 'water' },{ x: 5, y: 8, type: 'water' },{ x: 5, y: 9, type: 'water' },{ x: 8, y: 0, type: 'croc' },{ x: 8, y: 1, type: 'croc' },{ x: 8, y: 2, type: 'croc' },{ x: 8, y: 3, type: 'croc' },{ x: 8, y: 4, type: 'croc' },{ x: 8, y: 5, type: 'croc' },{ x: 8, y: 6, type: 'croc' },{ x: 8, y: 7, type: 'croc' },{ x: 8, y: 8, type: 'croc' }] },
-        { title: "Level 13: Ruang Rahasia", size: 10, start: { x: 4, y: 4, dir: 'N' }, target: { x: 0, y: 0 }, obstacles: [{ x: 3, y: 3, type: 'rock' },{ x: 5, y: 3, type: 'rock' },{ x: 3, y: 4, type: 'rock' },{ x: 5, y: 4, type: 'rock' },{ x: 3, y: 5, type: 'rock' },{ x: 4, y: 5, type: 'rock' },{ x: 5, y: 5, type: 'rock' },{ x: 1, y: 1, type: 'water' },{ x: 2, y: 1, type: 'water' },{ x: 3, y: 1, type: 'water' },{ x: 4, y: 1, type: 'water' },{ x: 5, y: 1, type: 'water' },{ x: 6, y: 1, type: 'water' },{ x: 7, y: 1, type: 'water' },{ x: 8, y: 1, type: 'water' },{ x: 1, y: 8, type: 'water' },{ x: 2, y: 8, type: 'water' },{ x: 3, y: 8, type: 'water' },{ x: 4, y: 8, type: 'water' },{ x: 5, y: 8, type: 'water' },{ x: 6, y: 8, type: 'water' },{ x: 7, y: 8, type: 'water' },{ x: 8, y: 8, type: 'water' },{ x: 1, y: 2, type: 'water' },{ x: 1, y: 3, type: 'water' },{ x: 1, y: 4, type: 'water' },{ x: 1, y: 5, type: 'water' },{ x: 1, y: 6, type: 'water' },{ x: 1, y: 7, type: 'water' },{ x: 8, y: 2, type: 'water' },{ x: 8, y: 3, type: 'water' },{ x: 8, y: 5, type: 'water' },{ x: 8, y: 6, type: 'water' },{ x: 8, y: 7, type: 'water' }] },
-        { title: "Level 14: Pola Sisir", size: 10, start: { x: 9, y: 9, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 8, type: 'rock' },{ x: 2, y: 8, type: 'rock' },{ x: 3, y: 8, type: 'rock' },{ x: 4, y: 8, type: 'rock' },{ x: 5, y: 8, type: 'rock' },{ x: 6, y: 8, type: 'rock' },{ x: 7, y: 8, type: 'rock' },{ x: 8, y: 8, type: 'rock' },{ x: 9, y: 8, type: 'rock' },{ x: 0, y: 6, type: 'water' },{ x: 1, y: 6, type: 'water' },{ x: 2, y: 6, type: 'water' },{ x: 3, y: 6, type: 'water' },{ x: 4, y: 6, type: 'water' },{ x: 5, y: 6, type: 'water' },{ x: 6, y: 6, type: 'water' },{ x: 7, y: 6, type: 'water' },{ x: 8, y: 6, type: 'water' },{ x: 1, y: 4, type: 'croc' },{ x: 2, y: 4, type: 'croc' },{ x: 3, y: 4, type: 'croc' },{ x: 4, y: 4, type: 'croc' },{ x: 5, y: 4, type: 'croc' },{ x: 6, y: 4, type: 'croc' },{ x: 7, y: 4, type: 'croc' },{ x: 8, y: 4, type: 'croc' },{ x: 9, y: 4, type: 'croc' },{ x: 0, y: 2, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 3, y: 2, type: 'rock' },{ x: 4, y: 2, type: 'rock' },{ x: 5, y: 2, type: 'rock' },{ x: 6, y: 2, type: 'rock' },{ x: 7, y: 2, type: 'rock' },{ x: 8, y: 2, type: 'rock' }] },
-        { title: "Level 15: Ujian Akhir Sang Kancil", size: 10, start: { x: 0, y: 9, dir: 'E' }, target: { x: 9, y: 0 }, obstacles: [{ x: 1, y: 9, type: 'rock' },{ x: 1, y: 8, type: 'rock' },{ x: 1, y: 6, type: 'rock' },{ x: 1, y: 5, type: 'rock' },{ x: 1, y: 4, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 1, y: 1, type: 'rock' },{ x: 1, y: 0, type: 'rock' },{ x: 3, y: 8, type: 'water' },{ x: 3, y: 7, type: 'water' },{ x: 3, y: 5, type: 'water' },{ x: 3, y: 4, type: 'water' },{ x: 3, y: 3, type: 'water' },{ x: 3, y: 1, type: 'water' },{ x: 5, y: 9, type: 'croc' },{ x: 5, y: 7, type: 'croc' },{ x: 5, y: 6, type: 'croc' },{ x: 5, y: 4, type: 'croc' },{ x: 5, y: 3, type: 'croc' },{ x: 5, y: 2, type: 'croc' },{ x: 5, y: 0, type: 'croc' },{ x: 7, y: 8, type: 'rock' },{ x: 7, y: 6, type: 'rock' },{ x: 7, y: 5, type: 'rock' },{ x: 7, y: 4, type: 'rock' },{ x: 7, y: 2, type: 'rock' },{ x: 7, y: 1, type: 'rock' },{ x: 8, y: 8, type: 'rock' },{ x: 9, y: 8, type: 'rock' },{ x: 8, y: 2, type: 'water' },{ x: 9, y: 2, type: 'water' }] },
-        // LEVEL 16-18 (MATEMATIKA)
-        { title: "Level 16: Pengenalan Angka", size: 6, start: { x: 0, y: 2, dir: 'E' }, target: { x: 5, y: 2 }, startScore: 0, targetScore: 5, obstacles: [{ x: 2, y: 2, type: 'math', val: '+2' },{ x: 4, y: 2, type: 'math', val: '+3' },{ x: 2, y: 1, type: 'rock' }, { x: 2, y: 3, type: 'rock' }] },
-        { title: "Level 17: Pilih Rute Benar", size: 7, start: { x: 0, y: 3, dir: 'E' }, target: { x: 6, y: 3 }, startScore: 0, targetScore: 10, obstacles: [{ x: 2, y: 1, type: 'math', val: '+8' },{ x: 4, y: 1, type: 'math', val: '+3' },{ x: 2, y: 5, type: 'math', val: '+5' },{ x: 4, y: 5, type: 'math', val: '+5' },{ x: 1, y: 3, type: 'rock' }, { x: 5, y: 3, type: 'rock' },{ x: 2, y: 2, type: 'water' }, { x: 4, y: 2, type: 'water' },{ x: 2, y: 4, type: 'croc' }, { x: 4, y: 4, type: 'croc' }] },
-        { title: "Level 18: Kali dan Kurang", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, startScore: 2, targetScore: 8, obstacles: [{ x: 2, y: 0, type: 'math', val: 'x2' },{ x: 6, y: 0, type: 'math', val: 'x3' },{ x: 2, y: 4, type: 'math', val: 'x2' },{ x: 6, y: 2, type: 'math', val: '-4' },{ x: 1, y: 1, type: 'rock' }, { x: 3, y: 1, type: 'rock' },{ x: 2, y: 2, type: 'water' }, { x: 4, y: 3, type: 'croc' },{ x: 4, y: 5, type: 'rock' }] }
+        
+        // LEVEL 6-15 (Menengah - Map Lebih Luas)
+        { title: "Level 6: Pola ZigZag", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, obstacles: [{ x: 0, y: 2, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 4, y: 4, type: 'rock' },{ x: 5, y: 4, type: 'rock' }] },
+        { title: "Level 7: Tepi Terlarang", size: 7, start: { x: 3, y: 6, dir: 'N' }, target: { x: 3, y: 0 }, obstacles: [{ x: 0, y: 1, type: 'water' },{ x: 6, y: 1, type: 'croc' },{ x: 1, y: 3, type: 'rock' }] },
+        { title: "Level 8: Ular Tangga", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 2, y: 6, type: 'rock' },{ x: 5, y: 1, type: 'rock' }] },
+        { title: "Level 9: Jembatan Kritis", size: 8, start: { x: 0, y: 4, dir: 'E' }, target: { x: 7, y: 4 }, obstacles: [{ x: 3, y: 2, type: 'water' },{ x: 3, y: 5, type: 'water' }] },
+        { title: "Level 10: Rawa Buntu", size: 8, start: { x: 7, y: 7, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 6, type: 'water' },{ x: 0, y: 2, type: 'croc' }] },
+        { title: "Level 11: Labirin Lapis", size: 9, start: { x: 0, y: 0, dir: 'E' }, target: { x: 4, y: 4 }, obstacles: [{ x: 1, y: 1, type: 'rock' },{ x: 7, y: 7, type: 'rock' }] },
+        { title: "Level 12: Ular Vertikal", size: 9, start: { x: 0, y: 0, dir: 'E' }, target: { x: 8, y: 8 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 5, y: 5, type: 'water' }] },
+        { title: "Level 13: Ruang Rahasia", size: 9, start: { x: 4, y: 4, dir: 'N' }, target: { x: 0, y: 0 }, obstacles: [{ x: 3, y: 3, type: 'rock' },{ x: 1, y: 1, type: 'water' }] },
+        { title: "Level 14: Pola Sisir", size: 10, start: { x: 9, y: 9, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 8, type: 'rock' },{ x: 0, y: 6, type: 'water' }] },
+        { title: "Level 15: Ujian Map", size: 10, start: { x: 0, y: 9, dir: 'E' }, target: { x: 9, y: 0 }, obstacles: [{ x: 1, y: 9, type: 'rock' },{ x: 3, y: 8, type: 'water' }] },
+
+        // LEVEL 16-25 (Matematika & Advanced)
+        { title: "Level 16: MTK 1", size: 6, start: { x: 0, y: 2, dir: 'E' }, target: { x: 5, y: 2 }, startScore: 0, targetScore: 5, obstacles: [{ x: 2, y: 2, type: 'math', val: '+2' },{ x: 4, y: 2, type: 'math', val: '+3' }] },
+        { title: "Level 17: MTK 2", size: 7, start: { x: 0, y: 3, dir: 'E' }, target: { x: 6, y: 3 }, startScore: 0, targetScore: 10, obstacles: [{ x: 2, y: 1, type: 'math', val: '+8' },{ x: 4, y: 5, type: 'math', val: '+2' }] },
+        { title: "Level 18: Kali & Kurang", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, startScore: 2, targetScore: 8, obstacles: [{ x: 2, y: 0, type: 'math', val: 'x2' },{ x: 6, y: 2, type: 'math', val: '-4' },{ x: 6, y: 0, type: 'math', val: 'x4' }] },
+        { title: "Level 19: Map Padat", size: 10, start: { x: 0, y: 0, dir: 'E' }, target: { x: 9, y: 9 }, obstacles: [{ x: 1, y: 0, type: 'rock' },{ x: 1, y: 1, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 5, y: 5, type: 'croc' }] },
+        { title: "Level 20: Danau Buaya", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, obstacles: [{ x: 3, y: 3, type: 'croc' },{ x: 4, y: 4, type: 'croc' },{ x: 2, y: 2, type: 'croc' }] },
+        { title: "Level 21: Lorong Siku", size: 9, start: { x: 0, y: 8, dir: 'N' }, target: { x: 8, y: 0 }, obstacles: [{ x: 1, y: 1, type: 'rock' },{ x: 3, y: 3, type: 'rock' }] },
+        { title: "Level 22: Putaran Balik", size: 8, start: { x: 4, y: 4, dir: 'S' }, target: { x: 4, y: 3 }, obstacles: [{ x: 4, y: 5, type: 'rock' },{ x: 5, y: 4, type: 'rock' },{ x: 3, y: 4, type: 'rock' }] },
+        { title: "Level 23: Target 20", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, startScore: 5, targetScore: 20, obstacles: [{ x: 3, y: 0, type: 'math', val: 'x4' },{ x: 6, y: 3, type: 'math', val: '-10' },{ x: 6, y: 0, type: 'math', val: '+5' }] },
+        { title: "Level 24: Pembagian", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, startScore: 100, targetScore: 50, obstacles: [{ x: 4, y: 0, type: 'math', val: '-50' },{ x: 0, y: 4, type: 'math', val: '/2' }] },
+        { title: "Level 25: FINAL BOSS", size: 10, start: { x: 0, y: 0, dir: 'E' }, target: { x: 9, y: 9 }, startScore: 1, targetScore: 25, obstacles: [{ x: 5, y: 5, type: 'math', val: 'x5' },{ x: 1, y: 1, type: 'math', val: '+4' },{ x: 9, y: 0, type: 'math', val: '+20' }] }
     ];
 
     let currentLevelIndex = 0;
@@ -353,34 +304,27 @@
         fails: 0,
         deletions: 0
     };
+    let totalGameScore = 0;
 
     const kancilSVG = `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));"><polygon points="15,20 90,50 15,80 35,50" fill="#ea580c" stroke="#9a3412" stroke-width="4" stroke-linejoin="round"/><polygon points="35,50 90,50 15,80" fill="#c2410c" /></svg>`;
 
-    // PENGATURAN AWAL
     window.onload = function() {
-    // Ambil nama dari portal utama
-    const savedName = localStorage.getItem('globalPlayerName');
-    
-    // Jika nama tidak ada (anak nakal langsung buka link game), tendang balik ke index
-    if (!savedName || savedName === "") {
-        alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
-        window.location.href = "index.html";
-    } else {
+        const savedName = localStorage.getItem('globalPlayerName');
+        
+        // Pengecekan: Jika nama belum diisi di index.html, tendang kembali
+        if (!savedName || savedName === "") {
+            alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
+            window.location.href = "index.html";
+            return;
+        }
+        
         document.getElementById('displayName').textContent = savedName;
-    }
-
-    // Panggil fungsi init game Anda di bawah ini
-    if(typeof initGame === 'function') initGame();
-    if(typeof loadLevel === 'function') loadLevel(0);
+        loadLevel(0); // Mulai dari Level 1
     };
 
-    function savePlayerName() {
-        let name = document.getElementById('playerName').value.trim();
-        if(name) localStorage.setItem('kancilPlayerName', name);
-    }
-
+    // Tombol Panah di Keyboard
     document.addEventListener('keydown', function(event) {
-        if (isRunning || document.getElementById('leaderboardModal').style.display === 'flex') return; 
+        if (isRunning) return; 
         switch(event.key) {
             case 'ArrowUp': event.preventDefault(); addCommand('MAJU'); break;
             case 'ArrowLeft': event.preventDefault(); addCommand('KIRI'); break;
@@ -389,26 +333,11 @@
         }
     });
 
-    function initLeaderboardFilter() {
-        const filter = document.getElementById('leaderboardLevelFilter');
-        filter.innerHTML = '<option value="ALL">Semua Level</option>';
-        LEVELS.forEach((level) => {
-            const option = document.createElement('option');
-            option.value = level.title; option.textContent = level.title;
-            filter.appendChild(option);
-        });
-    }
-
-    function jumpToLevel(index) {
-        if(isRunning) return;
-        currentLevelIndex = parseInt(index);
-        loadLevel(currentLevelIndex);
-    }
-
     function loadLevel(index) {
+        // CEK APAKAH SUDAH TAMAT
         if (index >= LEVELS.length) {
-            alert("LUAR BIASA! Anda telah menamatkan seluruh Tantangan Kancil!");
-            index = 0; currentLevelIndex = 0;
+            document.getElementById('completionModal').style.display = 'flex';
+            return;
         }
         
         currentLevelIndex = index;
@@ -417,12 +346,12 @@
         commandQueue = [];
         isRunning = false;
         
-        // Reset Tracker
+        // Reset Analytics
         levelStats = { startTime: Date.now(), fails: 0, deletions: 0 };
         currentScore = currentLevelData.startScore || 0;
         activeItems = JSON.parse(JSON.stringify(currentLevelData.obstacles));
 
-        // Update UI Teks
+        // Update UI Text
         document.getElementById('levelDisplay').textContent = currentLevelData.title;
         
         let newCellSize = currentLevelData.size > 8 ? '38px' : (currentLevelData.size > 6 ? '45px' : '55px');
@@ -495,7 +424,7 @@
     function removeCommand(index) {
         if (isRunning) return;
         commandQueue.splice(index, 1); 
-        levelStats.deletions++; // TRACKING: Catat penghapusan
+        levelStats.deletions++; 
         renderQueue();
     }
 
@@ -534,7 +463,14 @@
         renderBoard();
     }
 
-    function nextLevel() { jumpToLevel(currentLevelIndex + 1); }
+    function nextLevel() { 
+        jumpToLevel(currentLevelIndex + 1); 
+    }
+    
+    function jumpToLevel(index) {
+        if(isRunning) return;
+        loadLevel(index);
+    }
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -579,8 +515,8 @@
 
                 if (nextX < 0 || nextX >= currentLevelData.size || nextY < 0 || nextY >= currentLevelData.size) {
                     triggerShake(); showMessage("Gagal! Anda menabrak dinding.", "lose");
-                    levelStats.fails++; // TRACKING
-                    isRunning = false; return;
+                    levelStats.fails++; 
+                    isRunning = false; document.getElementById('btnRun').disabled = false; return;
                 }
 
                 const hitIndex = activeItems.findIndex(obs => obs.x === nextX && obs.y === nextY);
@@ -593,8 +529,8 @@
                         else if (hitObstacle.type === 'water') showMessage("Gagal! Anda tercebur.", "lose");
                         else if (hitObstacle.type === 'croc') showMessage("Gagal! Anda ditangkap Buaya!", "lose");
                         
-                        levelStats.fails++; // TRACKING
-                        isRunning = false; return;
+                        levelStats.fails++; 
+                        isRunning = false; document.getElementById('btnRun').disabled = false; return;
                     } 
                     else if (hitObstacle.type === 'math') {
                         let op = hitObstacle.val.charAt(0);
@@ -619,17 +555,16 @@
         // CEK KEMENANGAN
         if (kancil.x === currentLevelData.target.x && kancil.y === currentLevelData.target.y) {
             if (currentLevelData.targetScore !== undefined && currentScore !== currentLevelData.targetScore) {
-                triggerShake(); levelStats.fails++; // TRACKING
+                triggerShake(); levelStats.fails++; 
                 showMessage(`Gagal! Kancil sampai, tapi nilainya ${currentScore} (Butuh ${currentLevelData.targetScore}).`, "lose");
                 document.getElementById('btnRun').disabled = false; 
             } else {
-                // MENANG! Proses Analytics
                 showMessage("Berhasil! Anda memecahkan level ini. 🎉", "win");
                 document.getElementById('btnNext').style.display = 'block'; 
                 processWin();
             }
         } else {
-            levelStats.fails++; // TRACKING
+            levelStats.fails++; 
             showMessage("Kode selesai, tapi Anda belum sampai di tujuan.", "lose");
             document.getElementById('btnRun').disabled = false; 
         }
@@ -639,98 +574,37 @@
         isRunning = false;
     }
 
-    // --- SISTEM PAPAN PERINGKAT & ANALITIK ---
-    // GANTI 'URL_WEB_APP_ANDA_DISINI' DENGAN URL DARI GOOGLE APPS SCRIPT
-    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
-
+    // --- PENGIRIMAN DATA ---
     function processWin() {
         let playerName = document.getElementById('displayName').textContent;
         let timeTakenSeconds = Math.floor((Date.now() - levelStats.startTime) / 1000);
         let stepsTaken = commandQueue.length;
         
-        let baseScore = 1000;
-        let penalty = (timeTakenSeconds * 2) + (stepsTaken * 10) + (levelStats.fails * 50) + (levelStats.deletions * 5);
-        let finalScore = Math.max(10, baseScore - penalty); 
+        // KALIBRASI SKOR KANCIL: Max 40 Poin per Level
+        let baseScore = 40; 
+        let penalty = Math.floor(timeTakenSeconds / 5) + (levelStats.fails * 3) + (levelStats.deletions * 1);
+        let levelScore = Math.max(5, baseScore - penalty); 
+        
+        // Akumulasikan!
+        totalGameScore += levelScore;
 
         let record = {
             name: playerName,
-            gameName: "Jalur Kancil", // <-- SUDAH DIPERBAIKI (N besar)
+            gameName: "Jalur Kancil", 
             level: currentLevelData.title,
             steps: stepsTaken,
             fails: levelStats.fails,
             deletions: levelStats.deletions,
             time: timeTakenSeconds,
-            score: finalScore
+            score: totalGameScore // Kirim total akumulasi
         };
 
-        // 1. Simpan ke LocalStorage (sebagai cadangan/offline)
-        let leaderboards = JSON.parse(localStorage.getItem('kancilLeaderboard') || '[]');
-        leaderboards.push(record);
-        localStorage.setItem('kancilLeaderboard', JSON.stringify(leaderboards));
-
-        // 2. MENGIRIM DATA KE GOOGLE SHEETS SECARA REAL-TIME
         fetch(GOOGLE_SHEETS_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(record)
-        })
-        .then(() => console.log("Data berhasil dikirim ke satelit Guru!"))
-        .catch((error) => console.error("Koneksi gagal:", error));
-    }
-
-    function showLeaderboard() {
-        document.getElementById('leaderboardModal').style.display = 'flex';
-        renderLeaderboardTable();
-    }
-
-    function hideLeaderboard() {
-        document.getElementById('leaderboardModal').style.display = 'none';
-    }
-
-    function renderLeaderboardTable() {
-        let leaderboards = JSON.parse(localStorage.getItem('kancilLeaderboard') || '[]');
-        let filterValue = document.getElementById('leaderboardLevelFilter').value;
-        let tbody = document.getElementById('leaderboardBody');
-        tbody.innerHTML = '';
-
-        // Filter dan Sorting (Berdasarkan Skor Tertinggi)
-        let filteredData = filterValue === 'ALL' ? leaderboards : leaderboards.filter(item => item.level === filterValue);
-        filteredData.sort((a, b) => b.score - a.score); // Descending
-
-        if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="color: #94a3b8; font-style: italic;">Belum ada data.</td></tr>`;
-            return;
-        }
-
-        filteredData.forEach((row, index) => {
-            let tr = document.createElement('tr');
-            
-            // Format Badge (Warna)
-            let failBadge = row.fails === 0 ? `<span class="stat-badge badge-green">0</span>` : `<span class="stat-badge badge-red">${row.fails}</span>`;
-            let delBadge = row.deletions === 0 ? `<span class="stat-badge badge-green">0</span>` : `<span class="stat-badge badge-blue">${row.deletions}</span>`;
-            
-            tr.innerHTML = `
-                <td class="${index === 0 ? 'rank-1' : ''}">${index === 0 ? '🥇 1' : index === 1 ? '🥈 2' : index === 2 ? '🥉 3' : index + 1}</td>
-                <td style="font-weight: bold;">${row.name}</td>
-                <td style="font-size: 0.9em; color: #475569;">${row.level.split(':')[0]}</td>
-                <td>${row.steps}</td>
-                <td>${failBadge}</td>
-                <td>${delBadge}</td>
-                <td>${row.time} dtk</td>
-                <td style="font-weight: bold; color: #047857;">${row.score}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function clearLeaderboard() {
-        if(confirm("PERINGATAN: Anda yakin ingin menghapus SEMUA data analitik LOKAL siswa dari komputer ini?")) {
-            localStorage.removeItem('kancilLeaderboard');
-            renderLeaderboardTable();
-        }
+        }).catch((error) => console.error("Koneksi gagal:", error));
     }
 </script>
 </body>

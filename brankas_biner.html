@@ -114,6 +114,7 @@
     
     let startTime = 0;
     let failsCount = 0;
+    let totalGameScore = 0;
 
     window.onload = function() {
     // Ambil nama dari portal utama
@@ -249,7 +250,14 @@
     function sendDataToGuru() {
         let playerName = document.getElementById('displayName').textContent;
         let timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        let score = Math.max(10, 1000 - (timeTaken * 2) - (failsCount * 50));
+        
+        // KALIBRASI SKOR BINER: Max 40 Poin per Level
+        let baseScore = 40; 
+        let penalty = Math.floor(timeTaken / 5) + (failsCount * 3);
+        let levelScore = Math.max(5, baseScore - penalty);
+        
+        // Akumulasikan!
+        totalGameScore += levelScore;
 
         let record = {
             name: playerName,
@@ -259,7 +267,7 @@
             fails: failsCount,
             deletions: 0,
             time: timeTaken,
-            score: score
+            score: totalGameScore // Kirim total akumulasi
         };
 
         fetch(GOOGLE_SHEETS_URL, {

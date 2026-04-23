@@ -148,6 +148,7 @@
     let selectedPegIndex = null; 
     let isGameOver = false;
     let startTime = 0;
+    let totalGameScore = 0;
 
     window.onload = function() {
     // Ambil nama dari portal utama
@@ -284,11 +285,18 @@
 
     function sendDataToGuru() {
         let playerName = document.getElementById('displayName').textContent;
-        let timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        let timeTakenSeconds = Math.floor((Date.now() - startTime) / 1000);
         
         let minMoves = Math.pow(2, numRings) - 1;
         let extraMoves = Math.max(0, moves - minMoves);
-        let score = Math.max(10, 1000 - (timeTaken * 2) - (extraMoves * 10));
+        
+        // KALIBRASI SKOR HANOI: Max 250 Poin per Level (Karena hanya 4 Level)
+        let baseScore = 250; 
+        let penalty = (extraMoves * 2) + Math.floor(timeTakenSeconds / 3);
+        let levelScore = Math.max(25, baseScore - penalty);
+        
+        // Akumulasikan!
+        totalGameScore += levelScore;
 
         let record = {
             name: playerName,
@@ -297,8 +305,8 @@
             steps: moves, 
             fails: 0, 
             deletions: 0,
-            time: timeTaken,
-            score: score
+            time: timeTakenSeconds,
+            score: totalGameScore // Kirim total akumulasi
         };
 
         fetch(GOOGLE_SHEETS_URL, {
@@ -308,6 +316,7 @@
             body: JSON.stringify(record)
         }).catch(err => console.error(err));
     }
+    
 </script>
 </body>
 </html>
