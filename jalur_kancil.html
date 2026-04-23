@@ -494,6 +494,11 @@
         document.getElementById('btnRun').disabled = true;
         showMessage("Mengeksekusi kode...", "");
 
+        // FITUR BARU: Auto-Fokus ke Papan Game (Khusus layar HP)
+        if (window.innerWidth <= 768) {
+            document.querySelector('.header-area').scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
         for (let i = 0; i < commandQueue.length; i++) {
             const cmd = commandQueue[i];
             
@@ -501,7 +506,10 @@
             queueItems.forEach(el => el.style.backgroundColor = '#e2e8f0');
             if(queueItems[i]) {
                 queueItems[i].style.backgroundColor = '#fde047';
-                queueItems[i].scrollIntoView({ behavior: "smooth", block: "nearest" });
+                
+                // PERBAIKAN: Hanya scroll kotak antrean, jangan tarik seluruh layar
+                let queueBox = document.getElementById('queue');
+                queueBox.scrollTop = queueItems[i].offsetTop - queueBox.offsetTop - 10;
             }
 
             let speed = commandQueue.length > 15 ? 200 : 350;
@@ -560,6 +568,12 @@
             } else {
                 showMessage("Berhasil! Anda memecahkan level ini. 🎉", "win");
                 document.getElementById('btnNext').style.display = 'block'; 
+                
+                // Fokus kembali ke tombol Lanjut jika di HP
+                if (window.innerWidth <= 768) {
+                    document.getElementById('btnNext').scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+                
                 processWin();
             }
         } else {
@@ -572,7 +586,7 @@
         queueItems.forEach(el => el.style.backgroundColor = '#e2e8f0'); 
         isRunning = false;
     }
-
+    
     // --- PENGIRIMAN DATA ---
     function processWin() {
         let playerName = document.getElementById('displayName').textContent;
