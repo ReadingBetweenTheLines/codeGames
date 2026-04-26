@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS Dashboard - Leaderboard Kelas</title>
+    <title>LMS Dashboard - Leaderboard Multi-Kelas</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #334155; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -14,7 +14,8 @@
         .indicator.loading { background-color: #f59e0b; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         
-        .controls { display: flex; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;}
+        .controls { display: flex; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; flex-wrap: wrap;}
+        .filter-group { display: flex; align-items: center; gap: 10px; flex-grow: 1;}
         select, button { padding: 10px 15px; font-size: 16px; border-radius: 6px; border: 2px solid #cbd5e1; outline: none; font-weight: bold; cursor: pointer; }
         select { background: white; color: #0f172a; flex-grow: 1;}
         button { background-color: #3b82f6; color: white; border: none; }
@@ -34,6 +35,7 @@
         .badge-red { background: #fee2e2; color: #b91c1c; }
         .badge-green { background: #d1fae5; color: #047857; }
         .badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .badge-purple { background: #ede9fe; color: #4338ca; }
         
         .global-title { font-size: 20px; color: #d97706; font-weight: bold; margin-bottom: 10px; display: none; text-align: center; background: #fef3c7; padding: 10px; border-radius: 8px;}
     </style>
@@ -44,7 +46,7 @@
     <div class="header">
         <div>
             <h1>👨‍🏫 LMS Mini: Logika Komputer</h1>
-            <p style="margin: 5px 0 0 0; color: #64748b;">Server Pemantauan Kelas Real-Time</p>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Sistem Pemantauan Multi-Kelas</p>
         </div>
         <div class="status-box">
             <div id="statusIndicator" class="indicator"></div>
@@ -53,64 +55,68 @@
     </div>
 
     <div class="controls">
-        <label style="display: flex; align-items: center; color: #475569;">Mode Tampilan:</label>
-        <select id="gameFilter" onchange="renderTable()">
-            <option value="GLOBAL">🏆 RANKING KELAS GLOBAL (Total Semua Game)</option>
-            <option value="Jalur Kancil">🦊 Detail Game: Jalur Kancil</option>
-            <option value="Brankas Biner">🔓 Detail Game: Brankas Biner</option>
-            <option value="Menara Hanoi">🗼 Detail Game: Menara Hanoi</option>
-        </select>
-        <button onclick="fetchData()">🔄 Sinkronisasi Data</button>
+        <div class="filter-group">
+            <label style="color: #475569;">Pilih Kelas:</label>
+            <select id="classFilter" onchange="renderTable()" style="border-color: #8b5cf6; color: #4c1d95;">
+                <option value="ALL">🌟 SEMUA KELAS (Global)</option>
+                <option value="Kelas A">Kelas A</option>
+                <option value="Kelas B">Kelas B</option>
+                <option value="Kelas C">Kelas C</option>
+                <option value="Kelas D">Kelas D</option>
+                <option value="Kelas E">Kelas E</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label style="color: #475569;">Papan Peringkat:</label>
+            <select id="gameFilter" onchange="renderTable()">
+                <option value="GLOBAL">🏆 RANKING TOTAL (3 Game)</option>
+                <option value="Jalur Kancil">🦊 Detail: Jalur Kancil</option>
+                <option value="Brankas Biner">🔓 Detail: Brankas Biner</option>
+                <option value="Menara Hanoi">🗼 Detail: Menara Hanoi</option>
+            </select>
+        </div>
+        
+        <button onclick="fetchData()">🔄 Sinkronisasi</button>
     </div>
 
-    <div id="globalTitle" class="global-title">👑 KLASEMEN SEMENTARA: GRAND MASTER LOGIKA 👑</div>
+    <div id="globalTitle" class="global-title">👑 GRAND MASTER LOGIKA 👑</div>
 
     <table id="dataTable">
-        <thead id="tableHead">
-            </thead>
-        <tbody id="tableBody">
-            </tbody>
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
     </table>
 </div>
 
 <script>
-    // --- MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI ---
+    // GANTI DENGAN URL WEB APP ANDA
     const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
-    
     let globalData = [];
 
     function setStatus(state, text) {
-        const ind = document.getElementById('statusIndicator');
-        const txt = document.getElementById('statusText');
-        ind.className = 'indicator ' + state;
-        txt.textContent = text;
+        document.getElementById('statusIndicator').className = 'indicator ' + state;
+        document.getElementById('statusText').textContent = text;
     }
 
     async function fetchData() {
-        if (!GOOGLE_SHEETS_URL.includes("script.google.com")) {
-            setStatus('error', "URL Error!");
-            document.getElementById('tableBody').innerHTML = "<tr><td colspan='9'>Masukkan URL Web App Google Script Anda di kode HTML ini.</td></tr>";
-            return;
-        }
-
         setStatus('loading', 'Menarik data dari satelit...');
-        
         try {
             const response = await fetch(GOOGLE_SHEETS_URL);
             const data = await response.json();
             
-            // Kolom Baru: 0:Time, 1:Name, 2:GameName, 3:Level, 4:Steps, 5:Fails, 6:Dels, 7:Dur, 8:Score
+            // Struktur Baru: 0:Time, 1:Name, 2:Class, 3:Game, 4:Level, 5:Steps, 6:Fails, 7:Dels, 8:Dur, 9:Score
             globalData = data.slice(1).map(row => {
                 return {
                     timestamp: row[0],
                     name: row[1] || "Anonim",
-                    game: row[2] || "Game Lama",
-                    level: row[3] || "-",
-                    steps: parseInt(row[4]) || 0,
-                    fails: parseInt(row[5]) || 0,
-                    deletions: parseInt(row[6]) || 0,
-                    time: parseInt(row[7]) || 0,
-                    score: parseInt(row[8]) || 0
+                    className: row[2] || "Tanpa Kelas",
+                    game: row[3] || "-",
+                    level: row[4] || "-",
+                    steps: parseInt(row[5]) || 0,
+                    fails: parseInt(row[6]) || 0,
+                    deletions: parseInt(row[7]) || 0,
+                    time: parseInt(row[8]) || 0,
+                    score: parseInt(row[9]) || 0
                 };
             });
             
@@ -122,56 +128,54 @@
     }
 
     function renderTable() {
-        const filter = document.getElementById('gameFilter').value;
+        const gameFilter = document.getElementById('gameFilter').value;
+        const classFilter = document.getElementById('classFilter').value;
         const thead = document.getElementById('tableHead');
         const tbody = document.getElementById('tableBody');
         const globalTitle = document.getElementById('globalTitle');
         tbody.innerHTML = '';
 
-        if (globalData.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='9' style='color:#94a3b8; padding: 30px;'>Belum ada data. Pastikan siswa sudah bermain.</td></tr>";
+        // Filter Data berdasarkan KELAS terlebih dahulu
+        let filteredData = globalData;
+        if (classFilter !== 'ALL') {
+            filteredData = globalData.filter(d => d.className === classFilter);
+        }
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan='10' style='color:#94a3b8; padding: 30px;'>Belum ada data untuk filter ini.</td></tr>`;
             return;
         }
 
-        if (filter === 'GLOBAL') {
-            // --- MODE GLOBAL RANKING ---
+        if (gameFilter === 'GLOBAL') {
             globalTitle.style.display = 'block';
             thead.innerHTML = `
                 <tr>
                     <th>Rank</th>
                     <th style="text-align: left;">Nama Siswa</th>
-                    <th>Total Game Dimainkan</th>
+                    <th>Kelas</th>
+                    <th>Total Game</th>
                     <th>Jalur Kancil</th>
                     <th>Brankas Biner</th>
                     <th>Menara Hanoi</th>
-                    <th>TOTAL SKOR (XP)</th>
+                    <th>TOTAL XP</th>
                 </tr>
             `;
 
-            // Proses Agregasi (Mencari Skor Tertinggi Per Siswa Per Game)
             let players = {};
-            globalData.forEach(d => {
-                if (!players[d.name]) {
-                    players[d.name] = { 
-                        name: d.name, 
-                        games: { 'Jalur Kancil': 0, 'Brankas Biner': 0, 'Menara Hanoi': 0 },
-                        gamesPlayed: 0
-                    };
+            filteredData.forEach(d => {
+                let id = d.name + "_" + d.className; // Bedakan nama sama tapi beda kelas
+                if (!players[id]) {
+                    players[id] = { name: d.name, className: d.className, games: { 'Jalur Kancil': 0, 'Brankas Biner': 0, 'Menara Hanoi': 0 } };
                 }
-                // Simpan skor tertinggi jika siswa main berkali-kali
-                if (d.score > players[d.name].games[d.game]) {
-                    players[d.name].games[d.game] = d.score;
-                }
+                if (d.score > players[id].games[d.game]) players[id].games[d.game] = d.score;
             });
 
-            // Hitung Total
             let rankArray = Object.values(players).map(p => {
                 let total = p.games['Jalur Kancil'] + p.games['Brankas Biner'] + p.games['Menara Hanoi'];
                 let playedCount = (p.games['Jalur Kancil']>0?1:0) + (p.games['Brankas Biner']>0?1:0) + (p.games['Menara Hanoi']>0?1:0);
                 return { ...p, totalScore: total, gamesPlayed: playedCount };
             });
 
-            // Urutkan berdasarkan Skor Total Tertinggi
             rankArray.sort((a, b) => b.totalScore - a.totalScore);
 
             rankArray.forEach((row, index) => {
@@ -181,7 +185,8 @@
                 tr.innerHTML = `
                     <td><strong style="font-size: 1.2em;">${index === 0 ? '🥇 1' : index === 1 ? '🥈 2' : index === 2 ? '🥉 3' : index + 1}</strong></td>
                     <td style="text-align: left; font-weight: bold; font-size: 1.1em;">${row.name}</td>
-                    <td><span class="badge badge-blue">${row.gamesPlayed} / 3 Game</span></td>
+                    <td><span class="badge badge-purple">${row.className}</span></td>
+                    <td><span class="badge badge-blue">${row.gamesPlayed} / 3</span></td>
                     <td style="color:#64748b">${row.games['Jalur Kancil'] || '-'}</td>
                     <td style="color:#64748b">${row.games['Brankas Biner'] || '-'}</td>
                     <td style="color:#64748b">${row.games['Menara Hanoi'] || '-'}</td>
@@ -191,45 +196,52 @@
             });
 
         } else {
-            // --- MODE DETAIL GAME ---
             globalTitle.style.display = 'none';
             thead.innerHTML = `
                 <tr>
                     <th>Rank</th>
                     <th style="text-align: left;">Nama Siswa</th>
+                    <th>Kelas</th>
                     <th>Level Tercapai</th>
-                    <th>Langkah</th>
-                    <th>Gagal/Error</th>
-                    <th>Durasi</th>
-                    <th>Skor Perolehan</th>
-                    <th style="font-size: 0.8em;">Waktu (WIB)</th>
+                    <th>Gagal</th>
+                    <th>Waktu (dtk)</th>
+                    <th>Skor Maksimal</th>
                 </tr>
             `;
 
-            let gameData = globalData.filter(d => d.game === filter);
-            gameData.sort((a, b) => b.score - a.score);
+            let gameSpecificData = filteredData.filter(d => d.game === gameFilter);
+            
+            // Mengambil skor tertinggi per siswa untuk game spesifik ini
+            let bestScores = {};
+            gameSpecificData.forEach(d => {
+                let id = d.name + "_" + d.className;
+                if (!bestScores[id] || d.score > bestScores[id].score) {
+                    bestScores[id] = d;
+                }
+            });
+            
+            let rankArray = Object.values(bestScores);
+            rankArray.sort((a, b) => b.score - a.score);
 
-            if (gameData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan='8' style='color:#94a3b8; padding: 30px;'>Belum ada yang memainkan ${filter}.</td></tr>`;
+            if (rankArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan='7' style='color:#94a3b8; padding: 30px;'>Belum ada yang memainkan ${gameFilter}.</td></tr>`;
                 return;
             }
 
-            gameData.forEach((row, index) => {
+            rankArray.forEach((row, index) => {
                 const tr = document.createElement('tr');
                 if (index === 0) tr.className = 'rank-1'; else if (index === 1) tr.className = 'rank-2'; else if (index === 2) tr.className = 'rank-3';
 
                 let failBadge = row.fails === 0 ? `<span class="badge badge-green">0</span>` : `<span class="badge badge-red">${row.fails}</span>`;
-                let timeStr = new Date(row.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
                 tr.innerHTML = `
                     <td><strong>${index + 1}</strong></td>
                     <td style="text-align: left; font-weight: bold;">${row.name}</td>
+                    <td><span class="badge badge-purple">${row.className}</span></td>
                     <td><span class="badge badge-blue">${row.level}</span></td>
-                    <td>${row.steps > 0 ? row.steps : '-'}</td>
                     <td>${failBadge}</td>
-                    <td>${row.time} dtk</td>
+                    <td>${row.time}</td>
                     <td class="score-high">${row.score}</td>
-                    <td style="color: #cbd5e1; font-size: 0.8em;">${timeStr}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -237,7 +249,7 @@
     }
 
     fetchData();
-    setInterval(fetchData, 5000); // Auto-refresh tiap 5 detik
+    setInterval(fetchData, 8000); // Dipercepat menjadi 8 detik
 </script>
 </body>
 </html>

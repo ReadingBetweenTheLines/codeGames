@@ -5,171 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Logika Komputer - Kelas Guru Bayo</title>
     <style>
-        :root {
-            --primary: #3b82f6;
-            --dark: #0f172a;
-            --bg: #f1f5f9;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--dark);
-        }
-
-        /* HEADER */
-        header {
-            background-color: var(--dark);
-            color: white;
-            width: 100%;
-            padding: 40px 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+        :root { --primary: #3b82f6; --dark: #0f172a; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; color: var(--dark); }
+        header { background-color: var(--dark); color: white; width: 100%; padding: 40px 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); box-sizing: border-box;}
         header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
         header p { margin: 10px 0 0 0; opacity: 0.8; font-size: 16px; }
-
-        /* GRID CONTAINER */
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            padding: 40px 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            box-sizing: border-box;
-        }
-
-        /* CARD STYLE */
-        .game-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .game-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 12px 20px rgba(59, 130, 246, 0.15);
-        }
+        .input-group { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        input, select { padding: 12px 20px; font-size: 18px; border-radius: 8px; border: none; width: 100%; max-width: 350px; text-align: center; font-weight: bold; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); box-sizing: border-box; cursor: pointer;}
+        select { background-color: #e0e7ff; color: #4338ca; border: 2px solid #a5b4fc; }
+        
+        .container { max-width: 1000px; width: 100%; padding: 40px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; box-sizing: border-box; }
+        .game-card { background: white; border-radius: 16px; padding: 25px; text-align: center; text-decoration: none; color: inherit; transition: all 0.3s ease; border: 2px solid transparent; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .game-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 12px 20px rgba(59, 130, 246, 0.15); }
         .icon { font-size: 50px; margin-bottom: 15px; display: block; }
         .game-card h2 { margin: 0 0 10px 0; color: var(--dark); }
         .game-card p { color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
-        
-        .btn-play {
-            background-color: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        /* FOOTER UNTUK GURU */
-        footer {
-            margin-top: auto;
-            padding: 40px 20px;
-            width: 100%;
-            text-align: center;
-        }
-        .admin-link {
-            font-size: 12px;
-            color: #cbd5e1;
-            text-decoration: none;
-            border: 1px solid #cbd5e1;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.3s;
-        }
+        .btn-play { background-color: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; display: inline-block; }
+        footer { margin-top: auto; padding: 40px 20px; width: 100%; text-align: center; }
+        .admin-link { font-size: 12px; color: #cbd5e1; text-decoration: none; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; transition: all 0.3s; }
         .admin-link:hover { color: #64748b; border-color: #64748b; }
-
-        /* RESPONSIVE */
-        @media (max-width: 600px) {
-            header h1 { font-size: 22px; }
-            .container { padding: 20px; gap: 15px; }
-        }
     </style>
 </head>
 <body>
 
-<body>
-
 <header>
     <h1>🎮 Portal Logika Komputer</h1>
-    <p>Silakan isi namamu sebelum memulai tantangan!</p>
+    <p>Lengkapi identitasmu sebelum memulai tantangan!</p>
     
-    <div style="margin-top: 20px;">
-        <input type="text" id="globalNameInput" placeholder="Ketik Nama Lengkap..." 
-               style="padding: 12px 20px; font-size: 18px; border-radius: 8px; border: none; width: 300px; text-align: center; font-weight: bold; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+    <div class="input-group">
+        <input type="text" id="globalNameInput" placeholder="Ketik Nama Lengkap...">
+        <select id="globalClassInput">
+            <option value="">-- Pilih Kelasmu --</option>
+            <option value="Kelas A">Kelas A</option>
+            <option value="Kelas B">Kelas B</option>
+            <option value="Kelas C">Kelas C</option>
+            <option value="Kelas D">Kelas D</option>
+            <option value="Kelas E">Kelas E</option>
+        </select>
     </div>
 </header>
 
 <div class="container">
-    <a href="#" onclick="checkName('Kancil.html')" class="game-card">
-        <div>
-            <span class="icon">🧭</span>
-            <h2>Jalur Kancil</h2>
-            <p>Belajar algoritma sekuensial dengan memandu Kancil melewati rintangan.</p>
-        </div>
+    <a href="#" onclick="checkIdentity('jalur_kancil.html')" class="game-card">
+        <div><span class="icon">🧭</span><h2>Jalur Kancil</h2><p>Belajar algoritma sekuensial dengan memandu Kancil melewati rintangan.</p></div>
         <span class="btn-play">Main Sekarang</span>
     </a>
-
-    <a href="#" onclick="checkName('brankas_biner.html')" class="game-card">
-        <div>
-            <span class="icon">🔓</span>
-            <h2>Brankas Biner</h2>
-            <p>Pahami cara komputer menyimpan angka melalui kode biner 0 dan 1.</p>
-        </div>
+    <a href="#" onclick="checkIdentity('brankas_biner.html')" class="game-card">
+        <div><span class="icon">🔓</span><h2>Brankas Biner</h2><p>Pahami cara komputer menyimpan angka melalui kode biner 0 dan 1.</p></div>
         <span class="btn-play">Main Sekarang</span>
     </a>
-
-    <a href="#" onclick="checkName('menara_hanoi.html')" class="game-card">
-        <div>
-            <span class="icon">🗼</span>
-            <h2>Menara Hanoi</h2>
-            <p>Latih kemampuan pemecahan masalah kompleks dengan metode rekursi.</p>
-        </div>
+    <a href="#" onclick="checkIdentity('menara_hanoi.html')" class="game-card">
+        <div><span class="icon">🗼</span><h2>Menara Hanoi</h2><p>Latih kemampuan pemecahan masalah kompleks dengan metode rekursi.</p></div>
         <span class="btn-play">Main Sekarang</span>
     </a>
 </div>
 
+<footer>
+    <a href="dashboard_guru.html" class="admin-link">Dashboard Guru (Akses Terbatas)</a>
+</footer>
+
 <script>
-    // Load nama jika sebelumnya sudah pernah mengetik
     window.onload = function() {
         const savedName = localStorage.getItem('globalPlayerName');
+        const savedClass = localStorage.getItem('globalPlayerClass');
         if(savedName) document.getElementById('globalNameInput').value = savedName;
+        if(savedClass) document.getElementById('globalClassInput').value = savedClass;
     }
 
-    // Simpan nama setiap kali siswa mengetik
-    document.getElementById('globalNameInput').addEventListener('input', function(e) {
-        localStorage.setItem('globalPlayerName', e.target.value.trim());
-    });
-
-    // Fungsi Validasi: Jangan biarkan masuk jika nama kosong
-    function checkName(targetUrl) {
+    // Fungsi Validasi Ketat
+    function checkIdentity(targetUrl) {
         const name = document.getElementById('globalNameInput').value.trim();
-        if (name === "") {
-            alert("⚠️ Eits! Isi namamu dulu ya sebelum bermain.");
-            document.getElementById('globalNameInput').focus();
+        const studentClass = document.getElementById('globalClassInput').value;
+
+        if (name === "" || studentClass === "") {
+            alert("⚠️ Eits! Nama dan Kelas tidak boleh kosong ya.");
         } else {
+            // Simpan ke memori HP/Laptop siswa
+            localStorage.setItem('globalPlayerName', name);
+            localStorage.setItem('globalPlayerClass', studentClass);
             window.location.href = targetUrl;
         }
     }
 </script>
-
-</body>
-
 </body>
 </html>
