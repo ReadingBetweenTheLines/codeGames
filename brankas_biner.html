@@ -52,8 +52,8 @@
 
 <div class="top-bar">
    <div class="player-input">
-    👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px;">-</span>
-    <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px;">(Ganti Nama)</a>
+    👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px; margin-left: 10px;">-</span>
+    <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px; color: #64748b;">(Ganti Nama)</a>
     </div>
     <div style="font-size: 12px; color: #64748b;">Terkoneksi ke Server Guru 📡</div>
 </div>
@@ -117,26 +117,26 @@
     let totalGameScore = 0;
 
     window.onload = function() {
-    // Ambil nama dari portal utama
-    const savedName = localStorage.getItem('globalPlayerName');
-    
-    // Jika nama tidak ada (anak nakal langsung buka link game), tendang balik ke index
-    if (!savedName || savedName === "") {
-        alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
-        window.location.href = "index.html";
-    } else {
-        document.getElementById('displayName').textContent = savedName;
-    }
+        // Ambil nama dari portal utama
+        const savedName = localStorage.getItem('globalPlayerName');
+        
+        // Jika nama tidak ada, tendang balik ke index
+        if (!savedName || savedName === "") {
+            alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
+            window.location.href = "index.html"; return;
+        } else {
+            document.getElementById('displayName').textContent = savedName;
+        }
 
-    // Panggil fungsi init game Anda di bawah ini
-    if(typeof initGame === 'function') initGame();
-    if(typeof loadLevel === 'function') loadLevel(0);
+        // --- SISTEM CHECKPOINT BINER ---
+        let savedLevel = localStorage.getItem('biner_level_' + savedName);
+        let savedScore = localStorage.getItem('biner_score_' + savedName);
+
+        if (savedScore) totalGameScore = parseInt(savedScore);
+        let levelToLoad = savedLevel ? parseInt(savedLevel) : 0;
+
+        loadLevel(levelToLoad);
     };
-
-    function savePlayerName() {
-        let name = document.getElementById('playerName').value.trim();
-        if(name) localStorage.setItem('globalPlayerName', name);
-    }
 
     // Fungsi Langsung Lompat Level (Dipanggil oleh Tombol Lanjut)
     function jumpToLevel(index) {
@@ -146,8 +146,9 @@
 
     function loadLevel(index) {
         if (index >= LEVELS.length) {
-            alert("Luar Biasa! Anda telah menamatkan seluruh level!");
-            index = 0; currentLevelIndex = 0;
+            alert("Luar Biasa! Anda telah menamatkan seluruh level Brankas Biner!");
+            // Reset ke awal jika sudah tamat
+            index = 0; currentLevelIndex = 0; 
         }
 
         currentLevelData = LEVELS[index];
@@ -249,6 +250,9 @@
 
     function sendDataToGuru() {
         let playerName = document.getElementById('displayName').textContent;
+        // Mengambil data kelas dari memori (agar tidak error) 
+        let playerClass = localStorage.getItem('globalPlayerClass') || "Tanpa Kelas"; 
+        
         let timeTaken = Math.floor((Date.now() - startTime) / 1000);
         
         // KALIBRASI SKOR BINER: Max 40 Poin per Level
@@ -259,16 +263,20 @@
         // Akumulasikan!
         totalGameScore += levelScore;
 
+        // Simpan Checkpoint ke memori HP 
+        localStorage.setItem('biner_level_' + playerName, currentLevelIndex + 1);
+        localStorage.setItem('biner_score_' + playerName, totalGameScore);
+
         let record = {
             name: playerName,
-            className: playerClass,
+            className: playerClass, 
             gameName: "Brankas Biner", 
             level: currentLevelData.title,
             steps: 0, 
             fails: failsCount,
             deletions: 0,
             time: timeTaken,
-            score: totalGameScore // Kirim total akumulasi
+            score: totalGameScore 
         };
 
         fetch(GOOGLE_SHEETS_URL, {
