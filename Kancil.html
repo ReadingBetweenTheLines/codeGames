@@ -3,184 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jalur Kancil - Mode Linear (25 Level)</title>
+    <title>Jalur Kancil - Hutan Labirin (25 Level)</title>
     <style>
-        :root {
-            --grid-size: 5; 
-            --cell-size: 55px;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        :root { --grid-size: 5; --cell-size: 55px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* HEADER PROFIL SISWA */
-        .top-bar {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-        .player-input {
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            color: #334155;
-        }
-
-        .container {
-            display: flex;
-            gap: 30px;
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 1000px;
-        }
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 450px;
-        }
-        .header-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-        .level-title { margin: 0 0 5px 0; color: #334155; text-align: center; font-size: 24px; }
+        .top-bar { width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box; }
+        .player-input { display: flex; align-items: center; font-weight: bold; color: #334155; }
         
-        /* BADGE LEVEL BARU */
-        .level-badge {
-            background: #e0e7ff; color: #4338ca; border: 2px solid #a5b4fc; 
-            padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px;
-        }
+        .container { display: flex; gap: 30px; background-color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 1000px; }
+        .game-area { display: flex; flex-direction: column; align-items: center; min-width: 450px; }
+        .header-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; width: 100%; }
+        .level-title { margin: 0 0 5px 0; color: #334155; text-align: center; font-size: 24px; font-weight: 900; text-transform: uppercase; }
+        .level-badge { background: #e0e7ff; color: #4338ca; border: 2px solid #a5b4fc; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
         
-        .scoreboard {
-            display: none; background: #fffbeb; padding: 10px 20px; border-radius: 8px;
-            margin-bottom: 15px; border: 2px dashed #f59e0b; font-size: 16px;
-            width: 80%; justify-content: space-around; align-items: center;
-        }
+        .scoreboard { display: none; background: #fffbeb; padding: 10px 20px; border-radius: 8px; margin-bottom: 15px; border: 2px dashed #f59e0b; font-size: 16px; width: 80%; justify-content: space-around; align-items: center; }
         .score-box { text-align: center; font-weight: bold; }
         .score-val { font-size: 24px; display: block; }
 
-        .board {
-            display: grid; grid-template-columns: repeat(var(--grid-size), var(--cell-size));
-            grid-template-rows: repeat(var(--grid-size), var(--cell-size)); gap: 2px;
-            background-color: #cbd5e1; border: 4px solid #475569; border-radius: 8px;
-            padding: 4px; transition: transform 0.1s;
-        }
+        /* PAPAN DIBUAT WARNA RUMPUT */
+        .board { display: grid; grid-template-columns: repeat(var(--grid-size), var(--cell-size)); grid-template-rows: repeat(var(--grid-size), var(--cell-size)); gap: 2px; background-color: #166534; border: 6px solid #14532d; border-radius: 8px; padding: 4px; transition: transform 0.1s; }
         
-        @keyframes shake {
-            0%, 100% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(3px, 2px) rotate(0deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-        }
+        @keyframes shake { 0%, 100% { transform: translate(1px, 1px); } 20%, 60% { transform: translate(-3px, 0px); } 40%, 80% { transform: translate(3px, 2px); } }
         .shake-animation { animation: shake 0.4s; border-color: #ef4444; }
-        @keyframes pop {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); color: #f59e0b; }
-        }
+        @keyframes pop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); color: #f59e0b; } }
         .pop-animation { animation: pop 0.3s; }
 
-        .cell {
-            background-color: #f8fafc; width: var(--cell-size); height: var(--cell-size);
-            display: flex; align-items: center; justify-content: center;
-            font-size: calc(var(--cell-size) * 0.55); border-radius: 4px; transition: background-color 0.3s;
-        }
-        .cell-water { background-color: #bae6fd; }
+        /* TIPE SEL */
+        .cell { background-color: #dcfce7; width: var(--cell-size); height: var(--cell-size); display: flex; align-items: center; justify-content: center; font-size: calc(var(--cell-size) * 0.6); border-radius: 4px; position: relative; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);}
+        .cell-water { background-color: #38bdf8; box-shadow: inset 0 0 10px #0284c7; }
+        .cell-ice { background-color: #e0f2fe; box-shadow: inset 0 0 10px #7dd3fc; border: 1px solid #bae6fd; }
         
-        .math-coin {
-            background-color: #fef08a; border-radius: 50%; width: 80%; height: 80%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: calc(var(--cell-size) * 0.35); font-weight: 900; color: #b45309;
-            box-shadow: inset 0 -3px 0 #ca8a04, 0 3px 5px rgba(0,0,0,0.2); border: 2px solid #eab308;
+        /* ANIMASI ARUS SUNGAI BARU */
+        .cell-conveyor {
+            background-color: #0ea5e9;
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+            background-size: 20px 20px;
+            animation: flowWater 1s linear infinite;
         }
-        
-        .kancil { width: 80%; height: 80%; transition: transform 0.3s ease; }
-        .dir-N { transform: rotate(-90deg); }
-        .dir-E { transform: rotate(0deg); }
-        .dir-S { transform: rotate(90deg); }
-        .dir-W { transform: rotate(180deg); }
+        @keyframes flowWater { 0% {background-position: 0 0;} 100% {background-position: 20px 20px;} }
 
-        .controls { width: 280px; display: flex; flex-direction: column; gap: 12px; }
-        button {
-            padding: 10px 15px; font-size: 15px; font-weight: bold; border: none;
-            border-radius: 6px; cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-        }
+        .math-coin { background-color: #fef08a; border-radius: 50%; width: 80%; height: 80%; display: flex; justify-content: center; align-items: center; font-size: calc(var(--cell-size) * 0.35); font-weight: 900; color: #b45309; border: 2px solid #eab308; box-shadow: 0 3px 5px rgba(0,0,0,0.3);}
+        
+        .kancil { width: 85%; height: 85%; transition: transform 0.2s ease; z-index: 10; position: absolute;}
+        .dir-N { transform: rotate(-90deg); } .dir-E { transform: rotate(0deg); } .dir-S { transform: rotate(90deg); } .dir-W { transform: rotate(180deg); }
+
+        .controls { width: 280px; display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 10px 15px; font-size: 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
         button:active { transform: scale(0.95); }
         button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
         .btn-cmd { background-color: #3b82f6; color: white; display: flex; justify-content: space-between; align-items: center;}
-        .btn-cmd:hover:not(:disabled) { background-color: #2563eb; }
-        .shortcut-hint { font-size: 11px; opacity: 0.7; font-weight: normal; background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 4px;}
-        
         .btn-run { background-color: #10b981; color: white; margin-top: 10px;}
-        .btn-run:hover:not(:disabled) { background-color: #059669; }
         .btn-reset { background-color: #f59e0b; color: white; }
-        .btn-reset:hover:not(:disabled) { background-color: #d97706; }
         .btn-next { background-color: #8b5cf6; color: white; display: none; margin-top: 15px; width: 100%;}
-        .btn-next:hover { background-color: #7c3aed; }
         .btn-clear { background-color: #ef4444; color: white; }
-        .btn-clear:hover:not(:disabled) { background-color: #dc2626; }
         
-        .queue-container {
-            flex-grow: 1; background-color: #f1f5f9; border-radius: 6px; padding: 10px;
-            border: 1px solid #cbd5e1; min-height: 200px; max-height: 350px; overflow-y: auto;
-        }
-        .queue-item {
-            background-color: #e2e8f0; padding: 5px 10px; margin-bottom: 5px;
-            border-radius: 4px; font-family: monospace; font-size: 14px;
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid transparent;
-        }
-        .queue-item:hover { background-color: #fee2e2; border-color: #ef4444; transform: translateX(5px); }
-        .queue-item:hover::after { content: '❌ Hapus'; color: #ef4444; font-size: 11px; font-weight: bold; }
+        .memory-box { background: #1e293b; color: #38bdf8; padding: 8px; text-align: center; border-radius: 6px; font-family: monospace; font-weight: bold; margin-top: 5px;}
+        .memory-full { color: #ef4444; animation: pop 0.3s; }
 
+        .queue-container { flex-grow: 1; background-color: #f1f5f9; border-radius: 6px; padding: 10px; border: 1px solid #cbd5e1; min-height: 180px; max-height: 250px; overflow-y: auto; }
+        .queue-item { background-color: #e2e8f0; padding: 5px 10px; margin-bottom: 5px; border-radius: 4px; font-family: monospace; font-size: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-left: 4px solid #3b82f6;}
+        
         #message { font-weight: bold; text-align: center; min-height: 24px; margin-top: 15px; font-size: 16px; }
         .win { color: #10b981; } .lose { color: #ef4444; }
 
-        /* CSS UNTUK MODAL KEMENANGAN AKHIR */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            align-items: center; justify-content: center; z-index: 1000;
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 500px; border-radius: 12px;
-            padding: 40px 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center;
-        }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 12px; padding: 40px 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
 
-        /* KODE RESPONSIF UNTUK HP */
+        /* FITUR PROYEKSI BAYANGAN */
+        .shadow-kancil { width: 85%; height: 85%; position: absolute; z-index: 5; opacity: 0.5; filter: grayscale(100%) contrast(150%) sepia(100%) hue-rotate(200deg); transition: all 0.3s ease; pointer-events: none;}
+        .shadow-crashed { filter: grayscale(100%) contrast(150%) sepia(100%) hue-rotate(300deg); opacity: 0.8; animation: pop 0.5s infinite alternate;}
+        
+        .btn-shadow { background-color: #6366f1; color: white; border: 2px solid #4f46e5; margin-top: 10px; display: flex; justify-content: space-between; font-weight: 900;}
+        .btn-shadow:hover { background-color: #4f46e5; }
+        .btn-shadow.active { background-color: #10b981; border-color: #059669; cursor: default; transform: none;}
+        
+        .xp-display { font-size: 14px; background: #1e293b; color: #facc15; padding: 4px 10px; border-radius: 4px; font-weight: bold; margin-bottom: 5px; text-align: center;}
+
+        /* FITUR REORDER & INSERT */
+        .queue-item.selected { background-color: #dbeafe; border-color: #2563eb; transform: scale(1.02); box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2); }
+        .queue-controls { display: flex; gap: 4px; }
+        .queue-btn { background: white; border: 1px solid #cbd5e1; border-radius: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: background 0.2s;}
+        .queue-btn:hover { background: #e2e8f0; }
+        .queue-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .queue-btn.delete { color: #ef4444; border-color: #fca5a5; }
+        .queue-btn.delete:hover { background: #fee2e2; }
+
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
-            .player-input { flex-direction: column; width: 100%; }
-            .container { flex-direction: column; padding: 15px; gap: 20px; }
-            .game-area { min-width: 100%; width: 100%; }
-            .controls { width: 100%; }
-            .scoreboard { width: 100%; box-sizing: border-box; flex-direction: column; gap: 10px;}
-            
-            .board { 
-                width: 100%; max-width: 350px; height: auto; aspect-ratio: 1/1; 
-                grid-template-columns: repeat(var(--grid-size), 1fr) !important;
-                grid-template-rows: repeat(var(--grid-size), 1fr) !important;
-            }
-            .cell { width: 100%; height: 100%; font-size: calc(300px / var(--grid-size) * 0.4); }
+            body { padding: 10px; } .top-bar, .container, .player-input { flex-direction: column; width: 100%; }
+            .game-area, .controls, .scoreboard { width: 100%; box-sizing: border-box; }
+            .board { max-width: 350px; height: auto; aspect-ratio: 1/1; grid-template-columns: repeat(var(--grid-size), 1fr) !important; grid-template-rows: repeat(var(--grid-size), 1fr) !important; }
+            .cell { font-size: calc(300px / var(--grid-size) * 0.5); }
         }
     </style>
 </head>
@@ -189,7 +103,7 @@
 <div class="top-bar">
     <div class="player-input">
         👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px; margin-left: 10px;">-</span>
-        <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px; color: #64748b;">(Ganti Nama)</a>
+        <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px; color: #64748b;">(Ganti)</a>
     </div>
     <div style="font-size: 12px; color: #64748b; font-weight: bold;">Terkoneksi ke Server Guru 📡</div>
 </div>
@@ -202,15 +116,9 @@
         </div>
 
         <div class="scoreboard" id="scoreBoard">
-            <div class="score-box" style="color: #b45309;">
-                Nilai Kancil 🦊
-                <span class="score-val" id="currentScoreDisplay">0</span>
-            </div>
+            <div class="score-box" style="color: #b45309;">Kancil 🦊 <span class="score-val" id="currentScoreDisplay">0</span></div>
             <div style="font-size: 24px; font-weight: bold; color: #cbd5e1;">➡️</div>
-            <div class="score-box" style="color: #047857;">
-                Syarat Bendera 🏁
-                <span class="score-val" id="targetScoreDisplay">0</span>
-            </div>
+            <div class="score-box" style="color: #047857;">Bendera 🏁 <span class="score-val" id="targetScoreDisplay">0</span></div>
         </div>
         
         <div id="board" class="board"></div>
@@ -219,24 +127,20 @@
     </div>
 
     <div class="controls">
-        <h3 style="margin: 0;">Blok Perintah</h3>
-        <button class="btn-cmd" onclick="addCommand('MAJU')">
-            <span>⬆️ Maju</span> <span class="shortcut-hint">Panah Atas</span>
+        <div class="memory-box" id="memoryDisplay">Memori: 0 / ∞ Blok</div>
+        <div class="xp-display" id="xpDisplay">Dompet XP: 0</div>
+        <button class="btn-shadow" id="btnShadow" onclick="buyShadow()">
+            <span>👁️ Proyeksi Bayangan</span>
+            <span style="background: #3730a3; padding: 2px 6px; border-radius: 4px; font-size:12px;">30 XP</span>
         </button>
-        <button class="btn-cmd" onclick="addCommand('KIRI')">
-            <span>↩️ Belok Kiri</span> <span class="shortcut-hint">Panah Kiri</span>
-        </button>
-        <button class="btn-cmd" onclick="addCommand('KANAN')">
-            <span>↪️ Belok Kanan</span> <span class="shortcut-hint">Panah Kanan</span>
-        </button>
+        <button class="btn-cmd" onclick="addCommand('MAJU')"><span>⬆️ Maju</span></button>
+        <button class="btn-cmd" onclick="addCommand('KIRI')"><span>↩️ Belok Kiri</span></button>
+        <button class="btn-cmd" onclick="addCommand('KANAN')"><span>↪️ Belok Kanan</span></button>
         
-        <h3 style="margin: 10px 0 0 0; font-size: 14px;">Kode Anda (Klik untuk hapus):</h3>
         <div id="queue" class="queue-container"></div>
         
         <button class="btn-clear" onclick="clearQueue()">🗑️ Kosongkan Semua</button>
-        <button class="btn-run" id="btnRun" onclick="runCode()">
-            ▶️ Jalankan Kode <span style="font-size: 10px; opacity: 0.8; margin-left: 5px;">(Enter)</span>
-        </button>
+        <button class="btn-run" id="btnRun" onclick="runCode()">▶️ Jalankan Kode</button>
         <button class="btn-reset" onclick="resetLevel()">🔄 Ulangi Posisi</button>
     </div>
 </div>
@@ -244,12 +148,8 @@
 <div id="completionModal" class="modal-overlay">
     <div class="modal-content">
         <h1 style="color: #10b981; margin-top: 0; font-size: 36px;">🎉 TAMAT! 🎉</h1>
-        <p style="font-size: 18px; color: #334155;">Luar biasa! Kamu telah menguasai logika sekuensial dan menyelesaikan 25 level Jalur Kancil.</p>
-        <p style="color: #64748b;">Sekarang saatnya menghadapi tantangan berikutnya...</p>
-        <button onclick="window.location.href='brankas_biner.html'" 
-                style="background: #3b82f6; color: white; padding: 15px 30px; font-size: 18px; margin-top: 20px; border-radius: 8px; width: 100%;">
-            MAINKAN BRANKAS BINER ➔
-        </button>
+        <p style="font-size: 18px; color: #334155;">Luar biasa! Kamu telah menembus hutan labirin terberat.</p>
+        <button onclick="window.location.href='brankas_biner.html'" style="background: #3b82f6; color: white; padding: 15px 30px; font-size: 18px; margin-top: 20px; border-radius: 8px; width: 100%;">MAINKAN BRANKAS BINER ➔</button>
     </div>
 </div>
 
@@ -257,37 +157,250 @@
     // MASUKKAN URL GOOGLE APPS SCRIPT DI SINI
     const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
 
+    /* SISTEM PETA ASCII (Labirin Hutan) */
     const LEVELS = [
-        // LEVEL 1-5 (Dasar)
-        { title: "Level 1: Lurus & Belok", size: 5, start: { x: 0, y: 0, dir: 'E' }, target: { x: 4, y: 4 }, obstacles: [{ x: 2, y: 0, type: 'rock' }, { x: 2, y: 1, type: 'rock' }] },
-        { title: "Level 2: Lorong Sempit", size: 5, start: { x: 0, y: 4, dir: 'E' }, target: { x: 4, y: 0 }, obstacles: [{ x: 2, y: 4, type: 'rock' }, { x: 2, y: 3, type: 'rock' }, { x: 2, y: 2, type: 'rock' }, { x: 4, y: 2, type: 'rock' }, { x: 3, y: 2, type: 'rock' }] },
-        { title: "Level 3: Awas Air", size: 6, start: { x: 0, y: 0, dir: 'E' }, target: { x: 5, y: 5 }, obstacles: [{ x: 0, y: 3, type: 'water' }, { x: 1, y: 3, type: 'water' }, { x: 3, y: 3, type: 'water' }, { x: 4, y: 3, type: 'water' }, { x: 5, y: 3, type: 'water' }] },
-        { title: "Level 4: Salah Arah", size: 6, start: { x: 5, y: 5, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 2, y: 2, type: 'croc' }, { x: 2, y: 3, type: 'rock' }, { x: 3, y: 2, type: 'rock' }, { x: 3, y: 3, type: 'croc' }] },
-        { title: "Level 5: Memutar Balik", size: 6, start: { x: 0, y: 0, dir: 'E' }, target: { x: 3, y: 3 }, obstacles: [{ x: 2, y: 2, type: 'rock' }, { x: 3, y: 2, type: 'rock' }, { x: 4, y: 2, type: 'rock' }, { x: 2, y: 3, type: 'rock' }, { x: 2, y: 4, type: 'rock' }, { x: 3, y: 4, type: 'rock' }, { x: 4, y: 4, type: 'rock' }] },
-        
-        // LEVEL 6-15 (Menengah - Map Lebih Luas)
-        { title: "Level 6: Pola ZigZag", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, obstacles: [{ x: 0, y: 2, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 2, y: 2, type: 'rock' },{ x: 4, y: 4, type: 'rock' },{ x: 5, y: 4, type: 'rock' }] },
-        { title: "Level 7: Tepi Terlarang", size: 7, start: { x: 3, y: 6, dir: 'N' }, target: { x: 3, y: 0 }, obstacles: [{ x: 0, y: 1, type: 'water' },{ x: 6, y: 1, type: 'croc' },{ x: 1, y: 3, type: 'rock' }] },
-        { title: "Level 8: Ular Tangga", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 2, y: 6, type: 'rock' },{ x: 5, y: 1, type: 'rock' }] },
-        { title: "Level 9: Jembatan Kritis", size: 8, start: { x: 0, y: 4, dir: 'E' }, target: { x: 7, y: 4 }, obstacles: [{ x: 3, y: 2, type: 'water' },{ x: 3, y: 5, type: 'water' }] },
-        { title: "Level 10: Rawa Buntu", size: 8, start: { x: 7, y: 7, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 6, type: 'water' },{ x: 0, y: 2, type: 'croc' }] },
-        { title: "Level 11: Labirin Lapis", size: 9, start: { x: 0, y: 0, dir: 'E' }, target: { x: 4, y: 4 }, obstacles: [{ x: 1, y: 1, type: 'rock' },{ x: 7, y: 7, type: 'rock' }] },
-        { title: "Level 12: Ular Vertikal", size: 9, start: { x: 0, y: 0, dir: 'E' }, target: { x: 8, y: 8 }, obstacles: [{ x: 2, y: 0, type: 'rock' },{ x: 5, y: 5, type: 'water' }] },
-        { title: "Level 13: Ruang Rahasia", size: 9, start: { x: 4, y: 4, dir: 'N' }, target: { x: 0, y: 0 }, obstacles: [{ x: 3, y: 3, type: 'rock' },{ x: 1, y: 1, type: 'water' }] },
-        { title: "Level 14: Pola Sisir", size: 10, start: { x: 9, y: 9, dir: 'W' }, target: { x: 0, y: 0 }, obstacles: [{ x: 1, y: 8, type: 'rock' },{ x: 0, y: 6, type: 'water' }] },
-        { title: "Level 15: Ujian Map", size: 10, start: { x: 0, y: 9, dir: 'E' }, target: { x: 9, y: 0 }, obstacles: [{ x: 1, y: 9, type: 'rock' },{ x: 3, y: 8, type: 'water' }] },
+        // TAHAP 1: DASAR (Level 1-4)
+        { title: "Level 1: Lorong Hutan", startDir: 'E', map: [
+            "TTTTT",
+            "K...T",
+            "TTT.T",
+            "T...F",
+            "TTTTT"
+        ]},
+        { title: "Level 2: Batu Halangan", startDir: 'E', map: [
+            "TTTTT",
+            "K..#T",
+            "TT..T",
+            "TTT.F",
+            "TTTTT"
+        ]},
+        { title: "Level 3: Jembatan Alami", startDir: 'E', map: [
+            "TTTTTT",
+            "K...TT",
+            "TTW.TT",
+            "TTW.FT",
+            "TTW.TT",
+            "TTTTTT"
+        ]},
+        { title: "Level 4: Sarang Buaya", startDir: 'W', map: [
+            "TTTTTTT",
+            "T.F...T",
+            "T.TTT.T",
+            "T.TCT.T",
+            "T...T.T",
+            "TTTTTKT",
+            "TTTTTTT"
+        ]},
 
-        // LEVEL 16-25 (Matematika & Advanced)
-        { title: "Level 16: MTK 1", size: 6, start: { x: 0, y: 2, dir: 'E' }, target: { x: 5, y: 2 }, startScore: 0, targetScore: 5, obstacles: [{ x: 2, y: 2, type: 'math', val: '+2' },{ x: 4, y: 2, type: 'math', val: '+3' }] },
-        { title: "Level 17: MTK 2", size: 7, start: { x: 0, y: 3, dir: 'E' }, target: { x: 6, y: 3 }, startScore: 0, targetScore: 10, obstacles: [{ x: 2, y: 1, type: 'math', val: '+8' },{ x: 4, y: 5, type: 'math', val: '+2' }] },
-        { title: "Level 18: Kali & Kurang", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, startScore: 2, targetScore: 8, obstacles: [{ x: 2, y: 0, type: 'math', val: 'x2' },{ x: 6, y: 2, type: 'math', val: '-4' },{ x: 6, y: 0, type: 'math', val: 'x4' }] },
-        { title: "Level 19: Map Padat", size: 10, start: { x: 0, y: 0, dir: 'E' }, target: { x: 9, y: 9 }, obstacles: [{ x: 1, y: 0, type: 'rock' },{ x: 1, y: 1, type: 'rock' },{ x: 1, y: 2, type: 'rock' },{ x: 5, y: 5, type: 'croc' }] },
-        { title: "Level 20: Danau Buaya", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, obstacles: [{ x: 3, y: 3, type: 'croc' },{ x: 4, y: 4, type: 'croc' },{ x: 2, y: 2, type: 'croc' }] },
-        { title: "Level 21: Lorong Siku", size: 9, start: { x: 0, y: 8, dir: 'N' }, target: { x: 8, y: 0 }, obstacles: [{ x: 1, y: 1, type: 'rock' },{ x: 3, y: 3, type: 'rock' }] },
-        { title: "Level 22: Putaran Balik", size: 8, start: { x: 4, y: 4, dir: 'S' }, target: { x: 4, y: 3 }, obstacles: [{ x: 4, y: 5, type: 'rock' },{ x: 5, y: 4, type: 'rock' },{ x: 3, y: 4, type: 'rock' }] },
-        { title: "Level 23: Target 20", size: 7, start: { x: 0, y: 0, dir: 'E' }, target: { x: 6, y: 6 }, startScore: 5, targetScore: 20, obstacles: [{ x: 3, y: 0, type: 'math', val: 'x4' },{ x: 6, y: 3, type: 'math', val: '-10' },{ x: 6, y: 0, type: 'math', val: '+5' }] },
-        { title: "Level 24: Pembagian", size: 8, start: { x: 0, y: 0, dir: 'E' }, target: { x: 7, y: 7 }, startScore: 100, targetScore: 50, obstacles: [{ x: 4, y: 0, type: 'math', val: '-50' },{ x: 0, y: 4, type: 'math', val: '/2' }] },
-        { title: "Level 25: FINAL BOSS", size: 10, start: { x: 0, y: 0, dir: 'E' }, target: { x: 9, y: 9 }, startScore: 1, targetScore: 25, obstacles: [{ x: 5, y: 5, type: 'math', val: 'x5' },{ x: 1, y: 1, type: 'math', val: '+4' },{ x: 9, y: 0, type: 'math', val: '+20' }] }
+        // TAHAP 2: ARUS SUNGAI (Level 5-8)
+        { title: "Level 5: Kenali Arus", startDir: 'E', map: [
+            "TTTTTT",
+            "K..vTT", 
+            "TTT.TT", 
+            "TTT>FT", 
+            "TTTTTT",
+            "TTTTTT"
+        ]},
+        { title: "Level 6: Terbawa Aliran", startDir: 'E', map: [
+            "TTTTTTT",
+            "K...TTT",
+            "TTT>vTT",
+            "TTTTvTT",
+            "T.C.v.T",
+            "T...F.T",
+            "TTTTTTT"
+        ]},
+        { title: "Level 7: Melawan Arus", startDir: 'N', map: [
+            "TTTTTTT",
+            "T.F.TTT", 
+            "T.T.TTT",
+            "T.^<v.T", 
+            "T.T.T.T",
+            "T...K.T", 
+            "TTTTTTT"
+        ]},
+        { title: "Level 8: Kombinasi Sungai", startDir: 'E', map: [
+            "TTTTTTTT",
+            "K...TTTT",
+            "TTW.TTTT",
+            "TTWvTTTT",
+            "TTW>vTTT",
+            "TTTT>F.T",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+
+        // TAHAP 3: LUMPUR ES (Level 9-12)
+        { title: "Level 9: Danau Beku", startDir: 'E', map: [
+            "TTTTTT",
+            "KIII#T", 
+            "TTT..T", 
+            "TTTF.T",
+            "TTTTTT",
+            "TTTTTT"
+        ]},
+        { title: "Level 10: Rem Darurat", startDir: 'E', map: [
+            "TTTTTTT",
+            "KIIII#T",
+            "TTTTI.T",
+            "TTTTF.T",
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTT"
+        ]},
+        { title: "Level 11: Seluncur Beruntun", startDir: 'E', map: [
+            "TTTTTTTT",
+            "KIII#TTT",
+            "TTTI#TTT",
+            "TTTI#TTT",
+            "TTT...FT",
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 12: Es dan Air", startDir: 'W', map: [
+            "TTTTTTTT",
+            "T....TTT",
+            "T.II.#.T",
+            "F.TW.I.T",
+            "T.TW.I.T",
+            "T.IIII.T",
+            "TTTTTTKT",
+            "TTTTTTTT"
+        ]},
+
+        // TAHAP 4: TOMBOL & JEMBATAN (Level 13-16)
+        { title: "Level 13: Mekanika Jembatan", startDir: 'E', map: [
+            "TTTTTTT",
+            "K..W..F",
+            "T..=.TT", 
+            "T*.WTTT", 
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 14: Jembatan Es", startDir: 'E', map: [
+            "TTTTTTTT",
+            "K.II=..F", 
+            "T.TTWTTT",
+            "T*.TWTTT", 
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 15: Kerja Bakti", startDir: 'E', map: [
+            "TTTTTTTT",
+            "K...TTTT",
+            "TTT.T..F", 
+            "T*..=.CT", 
+            "TTTTWTTT",
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 16: Jembatan Es", startDir: 'E', map: [
+            "TTTTTTTTT",
+            "K...WWTTT",
+            "TTT.WW=FT",
+            "TTT.WW.TT",
+            "TTTII*.TT",
+            "TTTTTTTTT",
+            "TTTTTTTTT",
+            "TTTTTTTTT",
+            "TTTTTTTTT"
+        ]},
+
+        // TAHAP 5: PORTAL CACING (Level 17-20)
+        { title: "Level 17: Pintu Ajaib", startDir: 'E', map: [
+            "TTTTTTT",
+            "K.OTT.F", 
+            "TTTTT.T",
+            "T0....T", 
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTT"
+        ]},
+        { title: "Level 18: Lintas Rawa", startDir: 'E', map: [
+            "TTTTTTT",
+            "K.OTTTT",
+            "TWWWWTT",
+            "T0..FTT",
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTT"
+        ]},
+        { title: "Level 19: Portal Arus", startDir: 'E', map: [
+            "TTTTTTTT",
+            "K..OTTTT",
+            "TTWTTTTT",
+            "TTW0>vTT",
+            "TTWT.v.T",
+            "TTWT.F.T",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 20: Portal Es", startDir: 'N', map: [
+            "TTTTTTTTT",
+            "F.0.TTTTT",
+            "T.W.TTTTT",
+            "T.IIO.TTT",
+            "T.TTI.TTT",
+            "T.TTI.TTT",
+            "T...K.TTT",
+            "TTTTTTTTT",
+            "TTTTTTTTT"
+        ]},
+
+        // TAHAP 6: MASTER LOGIKA & MATEMATIKA (Level 21-25)
+        { title: "Level 21: Kode Efisien", startDir: 'E', maxSteps: 6, map: [
+            "TTTTTTT",
+            "KIIII#T",
+            "TTTTI.T",
+            "TTTTF.T",
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTT"
+        ]},
+        { title: "Level 22: Hitung Cepat", startDir: 'E', startScore: 0, targetScore: 5, mathVals: ['+2', '+3'], map: [
+            "TTTTTT",
+            "K.M.M.",
+            "TTTTTF",
+            "TTTTTT",
+            "TTTTTT",
+            "TTTTTT"
+        ]},
+        { title: "Level 23: Persimpangan", startDir: 'E', startScore: 2, targetScore: 10, mathVals: ['x3', '+4'], map: [
+            "TTTTTTT",
+            "K.M.TTT",
+            "TTW.TTT",
+            "TTM..FT",
+            "TTTTTTT",
+            "TTTTTTT",
+            "TTTTTTT"
+        ]},
+        { title: "Level 24: Pilihan Sulit", startDir: 'E', startScore: 10, targetScore: 5, mathVals: ['-5', '+10'], maxSteps: 15, map: [
+            "TTTTTTTT",
+            "K..M..TT",
+            "TTT.TTTT",
+            "TTM..FTT",
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT",
+            "TTTTTTTT"
+        ]},
+        { title: "Level 25: SIMETRI SANG MASTER", startDir: 'E', startScore: 1, targetScore: 25, mathVals: ['+4', 'x5'], maxSteps: 25, map: [
+            "KIIOTTTTTT",
+            "TTTTTTTTTT",
+            "TTM..=.TTT", 
+            "TT.TTW...F",
+            "..*TTWM.TT", 
+            ".TTTTTTTTT",
+            "0TTTTTTTTT", 
+            "TTTTTTTTTT",
+            "TTTTTTTTTT",
+            "TTTTTTTTTT"
+        ]}
     ];
 
     let currentLevelIndex = 0;
@@ -298,31 +411,29 @@
     let currentScore = 0;
     let activeItems = []; 
     
-    // VARIABEL PELACAKAN (ANALYTICS)
-    let levelStats = {
-        startTime: 0,
-        fails: 0,
-        deletions: 0
-    };
+    let levelStats = { startTime: 0, fails: 0, deletions: 0 };
     let totalGameScore = 0;
+    let selectedQueueIndex = null; // Melacak indeks untuk Insert/Reorder
 
-    const kancilSVG = `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));"><polygon points="15,20 90,50 15,80 35,50" fill="#ea580c" stroke="#9a3412" stroke-width="4" stroke-linejoin="round"/><polygon points="35,50 90,50 15,80" fill="#c2410c" /></svg>`;
+    const kancilSVG = `<svg viewBox="0 0 100 100" style="width: 100%; height: 100%; filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.5));"><polygon points="15,20 90,50 15,80 35,50" fill="#ea580c" stroke="#7c2d12" stroke-width="4" stroke-linejoin="round"/><polygon points="35,50 90,50 15,80" fill="#9a3412" /></svg>`;
 
     window.onload = function() {
         const savedName = localStorage.getItem('globalPlayerName');
-        
-        // Pengecekan: Jika nama belum diisi di index.html, tendang kembali
         if (!savedName || savedName === "") {
             alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
-            window.location.href = "index.html";
-            return;
+            window.location.href = "index.html"; return;
         }
-        
         document.getElementById('displayName').textContent = savedName;
-        loadLevel(0); // Mulai dari Level 1
+
+        let savedLevel = localStorage.getItem('kancil_level_' + savedName);
+        let savedScore = localStorage.getItem('kancil_score_' + savedName);
+
+        if (savedScore) totalGameScore = parseInt(savedScore);
+        let levelToLoad = savedLevel ? parseInt(savedLevel) : 0;
+
+        loadLevel(levelToLoad);
     };
 
-    // Tombol Panah di Keyboard
     document.addEventListener('keydown', function(event) {
         if (isRunning) return; 
         switch(event.key) {
@@ -333,26 +444,151 @@
         }
     });
 
+    function updateMemoryDisplay() {
+        const memBox = document.getElementById('memoryDisplay');
+        if (currentLevelData.maxSteps) {
+            memBox.textContent = `Memori: ${commandQueue.length} / ${currentLevelData.maxSteps} Blok`;
+            if (commandQueue.length >= currentLevelData.maxSteps) {
+                memBox.classList.add('memory-full');
+                setTimeout(() => memBox.classList.remove('memory-full'), 300);
+            }
+        } else {
+            memBox.textContent = `Memori: ${commandQueue.length} / ∞ Blok`;
+        }
+    }
+
+    // --- FUNGSI INSERT & REORDER KODE ---
+    
+    function selectQueueItem(index) {
+        if (isRunning) return;
+        if (selectedQueueIndex === index) selectedQueueIndex = null;
+        else selectedQueueIndex = index;
+        renderQueue();
+    }
+
+    function moveCommand(index, direction, event) {
+        event.stopPropagation(); 
+        if (isRunning) return;
+        let newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= commandQueue.length) return;
+
+        let temp = commandQueue[index];
+        commandQueue[index] = commandQueue[newIndex];
+        commandQueue[newIndex] = temp;
+
+        if (selectedQueueIndex === index) selectedQueueIndex = newIndex;
+        else if (selectedQueueIndex === newIndex) selectedQueueIndex = index;
+
+        levelStats.deletions++; 
+        renderQueue();
+        if (isShadowActive) renderBoard();
+    }
+
+    function addCommand(cmd) {
+        if (isRunning) return;
+        if (currentLevelData.maxSteps && commandQueue.length >= currentLevelData.maxSteps) {
+            updateMemoryDisplay(); return;
+        }
+
+        if (selectedQueueIndex !== null) {
+            commandQueue.splice(selectedQueueIndex + 1, 0, cmd);
+            selectedQueueIndex++; 
+        } else {
+            commandQueue.push(cmd); 
+        }
+
+        updateMemoryDisplay(); renderQueue();
+        if (isShadowActive) renderBoard();
+    }
+
+    function removeCommand(index, event) {
+        if (event) event.stopPropagation(); 
+        if (isRunning) return;
+        
+        commandQueue.splice(index, 1); 
+        levelStats.deletions++; 
+        
+        if (selectedQueueIndex === index) selectedQueueIndex = null;
+        else if (selectedQueueIndex > index) selectedQueueIndex--;
+
+        updateMemoryDisplay(); renderQueue();
+        if (isShadowActive) renderBoard();
+    }
+
+    function clearQueue() {
+        if (isRunning) return;
+        commandQueue = [];
+        selectedQueueIndex = null; 
+        levelStats.deletions++; 
+        updateMemoryDisplay(); renderQueue();
+        if (isShadowActive) renderBoard();
+    }
+
+
+    // --- ENGINE PARSER PETA ASCII ---
     function loadLevel(index) {
-        // CEK APAKAH SUDAH TAMAT
         if (index >= LEVELS.length) {
-            document.getElementById('completionModal').style.display = 'flex';
-            return;
+            document.getElementById('completionModal').style.display = 'flex'; return;
+        }
+        currentLevelIndex = index;
+        let rawData = LEVELS[index];
+        
+        currentLevelData = {
+            title: rawData.title,
+            size: rawData.map.length,
+            startScore: rawData.startScore,
+            targetScore: rawData.targetScore,
+            maxSteps: rawData.maxSteps
+        };
+
+        kancil = { x: 0, y: 0, dir: rawData.startDir };
+        commandQueue = [];
+        selectedQueueIndex = null; // RESET PILIHAN SAAT PINDAH LEVEL
+        isRunning = false;
+        activeItems = [];
+        let mathIndex = 0;
+
+        for(let y=0; y<rawData.map.length; y++) {
+            let row = rawData.map[y];
+            for(let x=0; x<row.length; x++) {
+                let char = row[x];
+                if (char === 'K') { kancil.x = x; kancil.y = y; }
+                else if (char === 'F') { currentLevelData.target = { x, y }; }
+                else if (char === '#') activeItems.push({ x, y, type: 'rock' });
+                else if (char === 'T') activeItems.push({ x, y, type: 'tree' });
+                else if (char === 'W') activeItems.push({ x, y, type: 'water' });
+                else if (char === 'C') activeItems.push({ x, y, type: 'croc' });
+                else if (char === 'I') activeItems.push({ x, y, type: 'ice' });
+                else if (char === '^') activeItems.push({ x, y, type: 'conveyor', dir: 'N' });
+                else if (char === '>') activeItems.push({ x, y, type: 'conveyor', dir: 'E' });
+                else if (char === 'v') activeItems.push({ x, y, type: 'conveyor', dir: 'S' });
+                else if (char === '<') activeItems.push({ x, y, type: 'conveyor', dir: 'W' });
+                else if (char === 'O') activeItems.push({ x, y, type: 'portal', id: 'PA', targetId: 'PB' });
+                else if (char === '0') activeItems.push({ x, y, type: 'portal', id: 'PB' });
+                else if (char === '*') activeItems.push({ x, y, type: 'button', targetId: 'BR1' });
+                else if (char === '=') activeItems.push({ x, y, type: 'bridge', id: 'BR1', isOpen: false });
+                else if (char === 'M') {
+                    activeItems.push({ x, y, type: 'math', val: rawData.mathVals[mathIndex] });
+                    mathIndex++;
+                }
+            }
         }
         
-        currentLevelIndex = index;
-        currentLevelData = LEVELS[index];
-        kancil = { ...currentLevelData.start };
-        commandQueue = [];
-        isRunning = false;
-        
-        // Reset Analytics
         levelStats = { startTime: Date.now(), fails: 0, deletions: 0 };
         currentScore = currentLevelData.startScore || 0;
-        activeItems = JSON.parse(JSON.stringify(currentLevelData.obstacles));
 
-        // Update UI Text
+        // --- RESET FITUR BAYANGAN & UI ---
+        isShadowActive = false;
+        document.getElementById('xpDisplay').textContent = "Dompet XP: " + totalGameScore;
+        
+        let btnShadow = document.getElementById('btnShadow');
+        if (btnShadow) {
+            btnShadow.classList.remove('active');
+            btnShadow.innerHTML = `<span>👁️ Proyeksi Bayangan</span><span style="background: #3730a3; padding: 2px 6px; border-radius: 4px; font-size:12px;">30 XP</span>`;
+        }
+
         document.getElementById('levelDisplay').textContent = currentLevelData.title;
+        updateMemoryDisplay();
         
         let newCellSize = currentLevelData.size > 8 ? '38px' : (currentLevelData.size > 6 ? '45px' : '55px');
         document.documentElement.style.setProperty('--grid-size', currentLevelData.size);
@@ -363,17 +599,14 @@
             scoreBoard.style.display = 'flex';
             document.getElementById('currentScoreDisplay').textContent = currentScore;
             document.getElementById('targetScoreDisplay').textContent = currentLevelData.targetScore;
-        } else {
-            scoreBoard.style.display = 'none';
-        }
+        } else { scoreBoard.style.display = 'none'; }
 
         document.getElementById('btnNext').style.display = 'none';
         document.getElementById('btnRun').disabled = false;
         document.getElementById('board').classList.remove('shake-animation');
         showMessage("", "");
         
-        renderBoard();
-        renderQueue();
+        renderBoard(); renderQueue();
     }
 
     function renderBoard() {
@@ -390,17 +623,48 @@
                 const isKancil = (x === kancil.x && y === kancil.y);
 
                 if (obstacle && obstacle.type === 'water') cell.classList.add('cell-water');
+                if (obstacle && obstacle.type === 'ice') cell.classList.add('cell-ice');
 
                 if (obstacle) {
                     if (obstacle.type === 'rock') cell.innerHTML = '🪨';
+                    else if (obstacle.type === 'tree') cell.innerHTML = '🌲';
                     else if (obstacle.type === 'water') cell.innerHTML = '🌊';
                     else if (obstacle.type === 'croc') cell.innerHTML = '🐊';
                     else if (obstacle.type === 'math') cell.innerHTML = `<div class="math-coin">${obstacle.val}</div>`;
+                    else if (obstacle.type === 'portal') cell.innerHTML = '🌀';
+                    else if (obstacle.type === 'button') cell.innerHTML = '🔘';
+                    else if (obstacle.type === 'bridge') {
+                        cell.innerHTML = obstacle.isOpen ? '🌉' : '🌊';
+                        if (!obstacle.isOpen) cell.classList.add('cell-water');
+                    }
+                    else if (obstacle.type === 'conveyor') {
+                        cell.classList.add('cell-conveyor');
+                        let arrow = obstacle.dir === 'N' ? '↑' : obstacle.dir === 'S' ? '↓' : obstacle.dir === 'E' ? '→' : '←';
+                        cell.innerHTML = `<span style="color:white; font-weight:900; font-size:28px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index:2;">${arrow}</span>`;
+                    }
                 } else if (isTarget && !isKancil) {
                     cell.innerHTML = '🏁';
-                } else if (isKancil) {
-                    cell.innerHTML = `<div class="kancil dir-${kancil.dir}">${kancilSVG}</div>`;
                 }
+                
+                if (isKancil) {
+                    let kancilDiv = document.createElement('div');
+                    kancilDiv.className = `kancil dir-${kancil.dir}`;
+                    kancilDiv.innerHTML = kancilSVG;
+                    cell.appendChild(kancilDiv);
+                }
+
+                // RENDER BAYANGAN
+                if (isShadowActive && !isRunning) {
+                    let shadow = getShadowState();
+                    if (x === shadow.pos.x && y === shadow.pos.y) {
+                        let shadowDiv = document.createElement('div');
+                        shadowDiv.className = `shadow-kancil dir-${shadow.pos.dir}`;
+                        if (shadow.crashed) shadowDiv.classList.add('shadow-crashed'); 
+                        shadowDiv.innerHTML = kancilSVG;
+                        cell.appendChild(shadowDiv);
+                    }
+                }
+
                 boardEl.appendChild(cell);
             }
         }
@@ -409,23 +673,49 @@
     function renderQueue() {
         const queueEl = document.getElementById('queue');
         queueEl.innerHTML = '';
+        
         commandQueue.forEach((cmd, index) => {
             const item = document.createElement('div');
-            item.className = 'queue-item';
+            item.className = 'queue-item' + (selectedQueueIndex === index ? ' selected' : '');
+            item.onclick = () => selectQueueItem(index);
+
             let icon = cmd === 'MAJU' ? '⬆️' : cmd === 'KIRI' ? '↩️' : '↪️';
-            item.innerHTML = `<span>${index + 1}. ${icon} ${cmd}</span>`;
-            item.onclick = function() { removeCommand(index); };
-            item.title = "Klik untuk menghapus blok ini";
+            
+            let label = document.createElement('span');
+            label.innerHTML = `<strong>${index + 1}.</strong> ${icon} ${cmd}`;
+
+            let controls = document.createElement('div');
+            controls.className = 'queue-controls';
+
+            let btnUp = document.createElement('button');
+            btnUp.className = 'queue-btn';
+            btnUp.innerHTML = '▲';
+            btnUp.onclick = (e) => moveCommand(index, -1, e);
+            btnUp.disabled = (index === 0); 
+
+            let btnDown = document.createElement('button');
+            btnDown.className = 'queue-btn';
+            btnDown.innerHTML = '▼';
+            btnDown.onclick = (e) => moveCommand(index, 1, e);
+            btnDown.disabled = (index === commandQueue.length - 1); 
+
+            let btnDel = document.createElement('button');
+            btnDel.className = 'queue-btn delete';
+            btnDel.innerHTML = '✖';
+            btnDel.onclick = (e) => removeCommand(index, e);
+
+            controls.appendChild(btnUp);
+            controls.appendChild(btnDown);
+            controls.appendChild(btnDel);
+
+            item.appendChild(label);
+            item.appendChild(controls);
             queueEl.appendChild(item);
         });
-        queueEl.scrollTop = queueEl.scrollHeight;
-    }
 
-    function removeCommand(index) {
-        if (isRunning) return;
-        commandQueue.splice(index, 1); 
-        levelStats.deletions++; 
-        renderQueue();
+        if (selectedQueueIndex === null && commandQueue.length > 0) {
+            queueEl.scrollTop = queueEl.scrollHeight;
+        }
     }
 
     function showMessage(text, type) {
@@ -433,45 +723,23 @@
         msgEl.textContent = text; msgEl.className = type;
     }
 
-    function addCommand(cmd) {
-        if (isRunning) return;
-        commandQueue.push(cmd);
-        renderQueue();
-    }
-
-    function clearQueue() {
-        if (isRunning) return;
-        commandQueue = [];
-        levelStats.deletions++; 
-        renderQueue();
-    }
-
     function resetLevel() {
         if (isRunning) return;
-        kancil = { ...currentLevelData.start };
-        currentScore = currentLevelData.startScore || 0;
-        activeItems = JSON.parse(JSON.stringify(currentLevelData.obstacles)); 
         
-        if (currentLevelData.targetScore !== undefined) {
-            document.getElementById('currentScoreDisplay').textContent = currentScore;
-            document.getElementById('currentScoreDisplay').classList.remove('pop-animation');
+        let wasShadowActive = isShadowActive; 
+        loadLevel(currentLevelIndex); 
+        
+        if (wasShadowActive) {
+            isShadowActive = true;
+            let btn = document.getElementById('btnShadow');
+            btn.classList.add('active');
+            btn.innerHTML = `<span>👁️ Bayangan Aktif</span><span style="background:#059669; padding:2px 6px; border-radius:4px; font-size:12px;">Aktif</span>`;
+            renderBoard(); 
         }
-
-        document.getElementById('btnRun').disabled = false;
-        document.getElementById('board').classList.remove('shake-animation');
-        showMessage("", "");
-        renderBoard();
     }
 
-    function nextLevel() { 
-        jumpToLevel(currentLevelIndex + 1); 
-    }
-    
-    function jumpToLevel(index) {
-        if(isRunning) return;
-        loadLevel(index);
-    }
-
+    function nextLevel() { jumpToLevel(currentLevelIndex + 1); }
+    function jumpToLevel(index) { if(isRunning) return; loadLevel(index); }
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     function triggerShake() {
@@ -483,9 +751,33 @@
     async function runCode() {
         if (isRunning || commandQueue.length === 0) return;
         
-        kancil = { ...currentLevelData.start };
+        let rawData = LEVELS[currentLevelIndex];
+        kancil.x = 0; kancil.y = 0; kancil.dir = rawData.startDir;
+        activeItems = [];
+        let mathIndex = 0;
+        for(let y=0; y<rawData.map.length; y++) {
+            let row = rawData.map[y];
+            for(let x=0; x<row.length; x++) {
+                let char = row[x];
+                if (char === 'K') { kancil.x = x; kancil.y = y; }
+                else if (char === '#') activeItems.push({ x, y, type: 'rock' });
+                else if (char === 'T') activeItems.push({ x, y, type: 'tree' });
+                else if (char === 'W') activeItems.push({ x, y, type: 'water' });
+                else if (char === 'C') activeItems.push({ x, y, type: 'croc' });
+                else if (char === 'I') activeItems.push({ x, y, type: 'ice' });
+                else if (char === '^') activeItems.push({ x, y, type: 'conveyor', dir: 'N' });
+                else if (char === '>') activeItems.push({ x, y, type: 'conveyor', dir: 'E' });
+                else if (char === 'v') activeItems.push({ x, y, type: 'conveyor', dir: 'S' });
+                else if (char === '<') activeItems.push({ x, y, type: 'conveyor', dir: 'W' });
+                else if (char === 'O') activeItems.push({ x, y, type: 'portal', id: 'PA', targetId: 'PB' });
+                else if (char === '0') activeItems.push({ x, y, type: 'portal', id: 'PB' });
+                else if (char === '*') activeItems.push({ x, y, type: 'button', targetId: 'BR1' });
+                else if (char === '=') activeItems.push({ x, y, type: 'bridge', id: 'BR1', isOpen: false });
+                else if (char === 'M') { activeItems.push({ x, y, type: 'math', val: rawData.mathVals[mathIndex] }); mathIndex++; }
+            }
+        }
+        
         currentScore = currentLevelData.startScore || 0;
-        activeItems = JSON.parse(JSON.stringify(currentLevelData.obstacles)); 
         if (currentLevelData.targetScore !== undefined) document.getElementById('currentScoreDisplay').textContent = currentScore;
 
         document.getElementById('board').classList.remove('shake-animation');
@@ -495,6 +787,10 @@
         document.getElementById('btnRun').disabled = true;
         showMessage("Mengeksekusi kode...", "");
 
+        if (window.innerWidth <= 768) {
+            document.querySelector('.header-area').scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
         for (let i = 0; i < commandQueue.length; i++) {
             const cmd = commandQueue[i];
             
@@ -502,57 +798,63 @@
             queueItems.forEach(el => el.style.backgroundColor = '#e2e8f0');
             if(queueItems[i]) {
                 queueItems[i].style.backgroundColor = '#fde047';
-                queueItems[i].scrollIntoView({ behavior: "smooth", block: "nearest" });
+                let queueBox = document.getElementById('queue');
+                queueBox.scrollTop = queueItems[i].offsetTop - queueBox.offsetTop - 10;
             }
 
-            let speed = commandQueue.length > 15 ? 200 : 350;
+            let speed = commandQueue.length > 15 ? 150 : 300;
             await sleep(speed); 
             
             if (cmd === 'MAJU') {
-                let nextX = kancil.x; let nextY = kancil.y;
-                if (kancil.dir === 'N') nextY--; if (kancil.dir === 'E') nextX++;
-                if (kancil.dir === 'S') nextY++; if (kancil.dir === 'W') nextX--;
+                let moveResult = tryMoveKancil(kancil.dir);
+                if (moveResult === 'fatal') return; 
+                renderBoard();
 
-                if (nextX < 0 || nextX >= currentLevelData.size || nextY < 0 || nextY >= currentLevelData.size) {
-                    triggerShake(); showMessage("Gagal! Anda menabrak dinding.", "lose");
-                    levelStats.fails++; 
-                    isRunning = false; document.getElementById('btnRun').disabled = false; return;
+                let isSliding = true;
+                while(isSliding) {
+                    let onIce = activeItems.find(o => o.x === kancil.x && o.y === kancil.y && o.type === 'ice');
+                    if (!onIce) break; 
+                    
+                    await sleep(150);
+                    let slideResult = tryMoveKancil(kancil.dir, true);
+                    if (slideResult === 'fatal') return;
+                    if (slideResult === 'blocked') break; 
+                    renderBoard();
                 }
 
-                const hitIndex = activeItems.findIndex(obs => obs.x === nextX && obs.y === nextY);
-                if (hitIndex !== -1) {
-                    const hitObstacle = activeItems[hitIndex];
-                    if (hitObstacle.type === 'rock' || hitObstacle.type === 'water' || hitObstacle.type === 'croc') {
-                        kancil.x = nextX; kancil.y = nextY;
-                        renderBoard(); triggerShake(); 
-                        if (hitObstacle.type === 'rock') showMessage("Gagal! Anda menabrak batu.", "lose");
-                        else if (hitObstacle.type === 'water') showMessage("Gagal! Anda tercebur.", "lose");
-                        else if (hitObstacle.type === 'croc') showMessage("Gagal! Anda ditangkap Buaya!", "lose");
-                        
-                        levelStats.fails++; 
-                        isRunning = false; document.getElementById('btnRun').disabled = false; return;
-                    } 
-                    else if (hitObstacle.type === 'math') {
-                        let op = hitObstacle.val.charAt(0);
-                        let num = parseInt(hitObstacle.val.substring(1));
-                        if (op === '+') currentScore += num; else if (op === '-') currentScore -= num; else if (op === 'x') currentScore *= num;
-                        
-                        const scoreDisplay = document.getElementById('currentScoreDisplay');
-                        scoreDisplay.textContent = currentScore;
-                        scoreDisplay.classList.remove('pop-animation'); void scoreDisplay.offsetWidth; scoreDisplay.classList.add('pop-animation');
-                        activeItems.splice(hitIndex, 1);
+                let conv = activeItems.find(o => o.x === kancil.x && o.y === kancil.y && o.type === 'conveyor');
+                if (conv) {
+                    await sleep(200);
+                    let pushResult = tryMoveKancil(conv.dir);
+                    if (pushResult === 'fatal') return;
+                    renderBoard();
+                }
+
+                let btn = activeItems.find(o => o.x === kancil.x && o.y === kancil.y && o.type === 'button');
+                if (btn) {
+                    let bridge = activeItems.find(o => o.id === btn.targetId && o.type === 'bridge');
+                    if (bridge) bridge.isOpen = true;
+                    renderBoard(); await sleep(200);
+                }
+
+                let portal = activeItems.find(o => o.x === kancil.x && o.y === kancil.y && o.type === 'portal');
+                if (portal && portal.targetId) {
+                    let targetPortal = activeItems.find(o => o.id === portal.targetId && o.type === 'portal');
+                    if (targetPortal) {
+                        kancil.x = targetPortal.x; kancil.y = targetPortal.y;
+                        renderBoard(); await sleep(200);
                     }
                 }
-                kancil.x = nextX; kancil.y = nextY;
+
             } else if (cmd === 'KIRI') {
                 const dirs = ['N', 'W', 'S', 'E']; kancil.dir = dirs[(dirs.indexOf(kancil.dir) + 1) % 4];
+                renderBoard();
             } else if (cmd === 'KANAN') {
                 const dirs = ['N', 'E', 'S', 'W']; kancil.dir = dirs[(dirs.indexOf(kancil.dir) + 1) % 4];
+                renderBoard();
             }
-            renderBoard();
         }
 
-        // CEK KEMENANGAN
         if (kancil.x === currentLevelData.target.x && kancil.y === currentLevelData.target.y) {
             if (currentLevelData.targetScore !== undefined && currentScore !== currentLevelData.targetScore) {
                 triggerShake(); levelStats.fails++; 
@@ -561,6 +863,9 @@
             } else {
                 showMessage("Berhasil! Anda memecahkan level ini. 🎉", "win");
                 document.getElementById('btnNext').style.display = 'block'; 
+                if (window.innerWidth <= 768) {
+                    document.getElementById('btnNext').scrollIntoView({ behavior: "smooth", block: "center" });
+                }
                 processWin();
             }
         } else {
@@ -574,19 +879,155 @@
         isRunning = false;
     }
 
-    // --- PENGIRIMAN DATA ---
+    function tryMoveKancil(direction, isSliding = false) {
+        let nx = kancil.x, ny = kancil.y;
+        if (direction === 'N') ny--; if (direction === 'E') nx++;
+        if (direction === 'S') ny++; if (direction === 'W') nx--;
+
+        if (nx < 0 || nx >= currentLevelData.size || ny < 0 || ny >= currentLevelData.size) {
+            if (isSliding) return 'blocked'; 
+            triggerShake(); showMessage("Gagal! Anda menabrak dinding.", "lose");
+            levelStats.fails++; isRunning = false; document.getElementById('btnRun').disabled = false; return 'fatal';
+        }
+
+        const hitIndex = activeItems.findIndex(obs => obs.x === nx && obs.y === ny);
+        if (hitIndex !== -1) {
+            const hitObs = activeItems[hitIndex];
+            
+            if (hitObs.type === 'rock' || hitObs.type === 'tree' || (hitObs.type === 'bridge' && !hitObs.isOpen)) {
+                if (isSliding) return 'blocked'; 
+                triggerShake(); showMessage("Gagal! Anda menabrak rintangan.", "lose");
+                levelStats.fails++; isRunning = false; document.getElementById('btnRun').disabled = false; return 'fatal';
+            }
+            
+            if (hitObs.type === 'water' || hitObs.type === 'croc') {
+                kancil.x = nx; kancil.y = ny; renderBoard(); triggerShake();
+                showMessage(hitObs.type === 'water' ? "Gagal! Anda tercebur." : "Gagal! Dimakan Buaya!", "lose");
+                levelStats.fails++; isRunning = false; document.getElementById('btnRun').disabled = false; return 'fatal';
+            }
+
+            if (hitObs.type === 'math') {
+                let op = hitObs.val.charAt(0), num = parseInt(hitObs.val.substring(1));
+                if (op === '+') currentScore += num; else if (op === '-') currentScore -= num; else if (op === 'x') currentScore *= num;
+                const sd = document.getElementById('currentScoreDisplay');
+                sd.textContent = currentScore;
+                sd.classList.remove('pop-animation'); void sd.offsetWidth; sd.classList.add('pop-animation');
+                activeItems.splice(hitIndex, 1); 
+            }
+        }
+        kancil.x = nx; kancil.y = ny;
+        return 'ok';
+    }
+
+    // --- MESIN PROYEKSI BAYANGAN ---
+    let isShadowActive = false;
+
+    function buyShadow() {
+        if (isShadowActive) return;
+        if (totalGameScore < 30) {
+            alert("⚠️ Dompet XP kamu tidak cukup! Kamu butuh minimal 30 XP untuk membuka mata batin. Selesaikan level tanpa bantuan untuk mengumpulkan XP.");
+            return;
+        }
+        if (confirm("Gunakan 30 XP untuk melihat proyeksi bayangan di level ini?")) {
+            totalGameScore -= 30; 
+            isShadowActive = true;
+            
+            let playerName = document.getElementById('displayName').textContent;
+            localStorage.setItem('kancil_score_' + playerName, totalGameScore);
+            
+            document.getElementById('xpDisplay').textContent = "Dompet XP: " + totalGameScore;
+            
+            let btn = document.getElementById('btnShadow');
+            btn.classList.add('active');
+            btn.innerHTML = `<span>👁️ Bayangan Aktif</span><span style="background:#059669; padding:2px 6px; border-radius:4px; font-size:12px;">Aktif</span>`;
+            
+            renderBoard(); 
+        }
+    }
+
+    function getShadowState() {
+        let sKancil = { ...kancil };
+        let sItems = JSON.parse(JSON.stringify(activeItems)); 
+        let isCrashed = false;
+
+        for (let cmd of commandQueue) {
+            if (cmd === 'KIRI') {
+                const dirs = ['N', 'W', 'S', 'E']; sKancil.dir = dirs[(dirs.indexOf(sKancil.dir) + 1) % 4];
+            } else if (cmd === 'KANAN') {
+                const dirs = ['N', 'E', 'S', 'W']; sKancil.dir = dirs[(dirs.indexOf(sKancil.dir) + 1) % 4];
+            } else if (cmd === 'MAJU') {
+                let res = simMove(sKancil, sItems, sKancil.dir);
+                if (res === 'fatal') { isCrashed = true; break; }
+
+                let isSliding = true;
+                while(isSliding) {
+                    let onIce = sItems.find(o => o.x === sKancil.x && o.y === sKancil.y && o.type === 'ice');
+                    if (!onIce) break;
+                    let sRes = simMove(sKancil, sItems, sKancil.dir, true);
+                    if (sRes === 'fatal') { isCrashed = true; break; }
+                    if (sRes === 'blocked') break;
+                }
+                if (isCrashed) break;
+
+                let conv = sItems.find(o => o.x === sKancil.x && o.y === sKancil.y && o.type === 'conveyor');
+                if (conv) {
+                    let cRes = simMove(sKancil, sItems, conv.dir);
+                    if (cRes === 'fatal') { isCrashed = true; break; }
+                }
+                
+                let btn = sItems.find(o => o.x === sKancil.x && o.y === sKancil.y && o.type === 'button');
+                if (btn) {
+                    let bridge = sItems.find(o => o.id === btn.targetId && o.type === 'bridge');
+                    if (bridge) bridge.isOpen = true;
+                }
+
+                let portal = sItems.find(o => o.x === sKancil.x && o.y === sKancil.y && o.type === 'portal');
+                if (portal && portal.targetId) {
+                    let targetPortal = sItems.find(o => o.id === portal.targetId && o.type === 'portal');
+                    if (targetPortal) { sKancil.x = targetPortal.x; sKancil.y = targetPortal.y; }
+                }
+            }
+        }
+        return { pos: sKancil, crashed: isCrashed };
+    }
+
+    function simMove(sK, sItems, dir, isSliding=false) {
+        let nx = sK.x, ny = sK.y;
+        if (dir === 'N') ny--; if (dir === 'E') nx++;
+        if (dir === 'S') ny++; if (dir === 'W') nx--;
+        
+        if (nx < 0 || nx >= currentLevelData.size || ny < 0 || ny >= currentLevelData.size) return isSliding ? 'blocked' : 'fatal';
+        
+        let hitIndex = sItems.findIndex(o => o.x === nx && o.y === ny);
+        if (hitIndex !== -1) {
+            let hit = sItems[hitIndex];
+            if (hit.type === 'rock' || hit.type === 'tree' || (hit.type === 'bridge' && !hit.isOpen)) return isSliding ? 'blocked' : 'fatal';
+            
+            if (hit.type === 'water' || hit.type === 'croc') {
+                sK.x = nx; sK.y = ny; 
+                return 'fatal'; 
+            }
+            
+            if (hit.type === 'math') sItems.splice(hitIndex, 1);
+        }
+        sK.x = nx; sK.y = ny;
+        return 'ok';
+    }
+
     function processWin() {
         let playerName = document.getElementById('displayName').textContent;
+        let playerClass = localStorage.getItem('globalPlayerClass') || "Tanpa Kelas";
         let timeTakenSeconds = Math.floor((Date.now() - levelStats.startTime) / 1000);
         let stepsTaken = commandQueue.length;
         
-        // KALIBRASI SKOR KANCIL: Max 40 Poin per Level
-        let baseScore = 40; 
+        let baseScore = 40;
         let penalty = Math.floor(timeTakenSeconds / 5) + (levelStats.fails * 3) + (levelStats.deletions * 1);
         let levelScore = Math.max(5, baseScore - penalty); 
         
-        // Akumulasikan!
         totalGameScore += levelScore;
+
+        localStorage.setItem('kancil_level_' + playerName, currentLevelIndex + 1);
+        localStorage.setItem('kancil_score_' + playerName, totalGameScore);
 
         let record = {
             name: playerName,
@@ -597,12 +1038,11 @@
             fails: levelStats.fails,
             deletions: levelStats.deletions,
             time: timeTakenSeconds,
-            score: totalGameScore // Kirim total akumulasi
+            score: totalGameScore
         };
 
         fetch(GOOGLE_SHEETS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(record)
         }).catch((error) => console.error("Koneksi gagal:", error));
