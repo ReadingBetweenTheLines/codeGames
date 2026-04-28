@@ -3,279 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brankas Biner - Mode Linear</title>
+    <title>CYBER-VAULT: 25 Level Protocol</title>
     <style>
-        body { font-family: 'Courier New', Courier, monospace; background-color: #020617; color: #10b981; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .top-bar { background: #1e293b; padding: 15px 25px; border-radius: 8px; margin-bottom: 20px; width: 100%; max-width: 850px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; box-sizing: border-box;}
-        .player-input { font-weight: bold; color: #38bdf8; display: flex; align-items: center;}
-        .player-input input { padding: 8px; border-radius: 4px; border: 1px solid #38bdf8; background: #0f172a; color: white; margin-left: 10px; font-family: inherit; font-size: 16px; outline: none;}
-
-        .container { background-color: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 30px; width: 100%; max-width: 850px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); display: flex; flex-direction: column; align-items: center; box-sizing: border-box;}
+        body { font-family: 'Courier New', Courier, monospace; background-color: #020617; color: #10b981; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* HEADER BARU */
-        .header { width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #334155; padding-bottom: 15px; margin-bottom: 25px; }
-        .title { margin: 0; font-size: 24px; color: #38bdf8; text-transform: uppercase; letter-spacing: 2px; }
-        .level-badge { background: #1e293b; color: #fef08a; border: 1px solid #fef08a; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 16px; letter-spacing: 1px;}
-
-        .vault-screen { background-color: #000; border: 3px solid #10b981; border-radius: 8px; width: 100%; padding: 40px 20px; text-align: center; position: relative; box-sizing: border-box; box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.2); }
-        .target-label { font-size: 16px; color: #64748b; letter-spacing: 3px; }
-        .target-number { font-size: 80px; font-weight: bold; margin: 10px 0 0 0; text-shadow: 0 0 15px #10b981; }
-        .switches-container { display: flex; justify-content: center; gap: 15px; margin-top: 50px; margin-bottom: 40px; flex-wrap: wrap; }
-        .switch-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .bit-value { font-size: 18px; font-weight: bold; color: #475569; transition: all 0.3s; }
-        .bit-value.active { color: #10b981; text-shadow: 0 0 8px #10b981; transform: scale(1.2); }
-        .btn-switch { width: 55px; height: 75px; background-color: #1e293b; border: 2px solid #334155; border-radius: 8px; font-family: inherit; font-size: 36px; font-weight: bold; color: #64748b; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.5); }
-        .btn-switch.on { background-color: #10b981; border-color: #34d399; color: #020617; box-shadow: inset 0 4px 0 rgba(255,255,255,0.3), 0 0 15px rgba(16, 185, 129, 0.5); }
-        .btn-hack { background-color: #0ea5e9; color: #0f172a; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; font-family: inherit; border-radius: 6px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; }
-        .btn-hack:hover { background-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
-        .btn-hack:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; background-color: #475569;}
-        #statusMsg { margin-top: 25px; font-size: 18px; font-weight: bold; min-height: 24px; text-align: center; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
-        .shake { animation: shake 0.4s; border-color: #ef4444 !important; color: #ef4444;}
-        @keyframes unlock { 0% { border-color: #10b981; } 50% { border-color: #fef08a; box-shadow: 0 0 40px #fef08a; } 100% { border-color: #10b981; } }
-        .unlocked { animation: unlock 1s; border-color: #fef08a !important;}
+        .terminal { background-color: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 25px; width: 100%; max-width: 800px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); box-sizing: border-box; }
         
-        /* KODE RESPONSIF UNTUK HP */
-        @media (max-width: 600px) {
-            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
-            .player-input { flex-direction: column; width: 100%; }
-            .player-input input { margin-left: 0; margin-top: 10px; width: 100%; box-sizing: border-box; }
-            .header { flex-direction: column; gap: 15px; }
-            .target-number { font-size: 60px; }
-            .btn-switch { width: 42px; height: 60px; font-size: 24px; }
-            .switches-container { gap: 8px; }
-            .btn-hack { width: 100%; }
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #334155; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
+        .title-area h1 { margin: 0; font-size: 22px; color: #38bdf8; text-transform: uppercase; letter-spacing: 2px; }
+        .title-area .sub { font-size: 12px; color: #94a3b8; }
+        .level-badge { background: #1e293b; border: 1px solid #facc15; color: #facc15; padding: 5px 15px; border-radius: 6px; font-weight: bold; font-size: 18px; }
+
+        .module { display: none; flex-direction: column; align-items: center; text-align: center; animation: fadeIn 0.4s; padding: 10px 0;}
+        .module.active { display: flex; }
+        .instruction { font-size: 15px; color: #cbd5e1; margin-bottom: 20px; background: #1e293b; padding: 15px; border-radius: 8px; border-left: 4px solid #38bdf8; width: 100%; box-sizing: border-box;}
+        
+        .btn-action { background-color: #0ea5e9; color: #020617; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; font-family: inherit; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: 0.2s; margin-top: 20px; }
+        .btn-action:hover { background-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+
+        /* MODUL 1: BINER */
+        .bin-target { font-size: 50px; font-weight: bold; color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5); margin-bottom: 15px;}
+        .bin-switches { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .bit-wrap { display: flex; flex-direction: column; align-items: center; }
+        .bit-val { font-size: 12px; color: #64748b; font-weight: bold; margin-bottom: 5px;}
+        .btn-switch { width: 45px; height: 55px; background: #1e293b; border: 2px solid #334155; border-radius: 6px; font-size: 24px; color: #64748b; cursor: pointer; font-weight: bold; font-family: inherit;}
+        .btn-switch.on { background: #10b981; border-color: #34d399; color: #020617; box-shadow: 0 0 10px #10b981; }
+
+        /* MODUL 2: CIPHER */
+        .alphabet-tape { background: #1e293b; color: #94a3b8; font-size: 16px; letter-spacing: 4px; padding: 12px; border-radius: 6px; border: 1px dashed #475569; margin-bottom: 15px; width: 100%; box-sizing: border-box; text-align: center; font-weight: bold; overflow-wrap: break-word;}
+        .cipher-box { background: #000; border: 1px solid #facc15; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-size: 28px; letter-spacing: 5px; color: #facc15; font-weight: bold; width: 100%; box-sizing: border-box;}
+        .cipher-input { padding: 12px; width: 80%; font-size: 18px; text-align: center; text-transform: uppercase; background: #1e293b; border: 2px solid #38bdf8; color: white; border-radius: 6px; outline: none; font-family: inherit;}
+
+        /* MODUL 3: SORTING */
+        .sort-arr { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;}
+        .sort-block { width: 50px; height: 50px; background: #1e293b; border: 2px solid #ef4444; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fca5a5; cursor: pointer; transition: 0.1s; user-select: none;}
+        .sort-block.selected { background: #facc15; border-color: #facc15; color: #000; transform: translateY(-5px); }
+
+        /* MODUL 4: LOGIC */
+        .logic-eq { background: #000; border: 1px solid #8b5cf6; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 16px; color: #c4b5fd; text-align: center; width: 100%; box-sizing: border-box;}
+        .logic-gates { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .logic-btn { padding: 12px 20px; font-size: 18px; background: #1e293b; border: 2px solid #8b5cf6; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;}
+        .logic-btn.on { background: #8b5cf6; color: #000; box-shadow: 0 0 10px #8b5cf6;}
+
+        /* MODUL 5: SEARCH */
+        .search-log { background: #000; border: 1px solid #0ea5e9; padding: 10px; height: 100px; overflow-y: auto; text-align: left; font-size: 14px; color: #e0f2fe; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px;}
+        .search-input { padding: 12px; width: 120px; font-size: 20px; text-align: center; background: #1e293b; border: 2px solid #0ea5e9; color: white; border-radius: 6px; font-family: inherit;}
+
+        /* MODUL 6: PARITY */
+        .parity-grid { display: grid; gap: 4px; margin: 0 auto; padding: 10px; background: #1e293b; border-radius: 8px; border: 2px solid #ec4899; width: fit-content;}
+        .parity-cell { width: 40px; height: 40px; background: #0f172a; border: 1px solid #334155; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #fbcfe8; cursor: pointer;}
+        .parity-cell:hover { background: #334155; }
+
+        /* FEEDBACK LOG */
+        #sysMsg { margin-top: 20px; padding: 12px; background: #000; border-left: 4px solid #38bdf8; font-size: 14px; text-align: center; font-weight: bold; min-height: 20px;}
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-   <div class="player-input">
-    👤 Siswa: <span id="displayName" style="color: #3b82f6; background: #dbeafe; padding: 4px 10px; border-radius: 4px; margin-left: 10px;">-</span>
-    <a href="index.html" style="text-decoration:none; font-size: 14px; margin-left: 10px; color: #64748b;">(Ganti Nama)</a>
-    </div>
-    <div style="font-size: 12px; color: #64748b;">Terkoneksi ke Server Guru 📡</div>
-</div>
-
-<div class="container">
+<div class="terminal">
     <div class="header">
-        <h1 class="title">🔓 Brankas Biner</h1>
-        <div class="level-badge" id="levelDisplay">Level 1</div>
+        <div class="title-area">
+            <h1>CYBER-VAULT</h1>
+            <div class="sub">Operasional Siswa: <span id="playerName" style="color:#10b981;">Budi</span> <a href="#" onclick="resetData()" style="color:#ef4444; text-decoration:none; margin-left:10px;">(Reset)</a></div>
+        </div>
+        <div class="level-badge" id="lvlBadge">LEVEL 1/25</div>
     </div>
 
-    <div class="vault-screen" id="vaultScreen">
-        <div class="target-label">TARGET DESIMAL</div>
-        <div class="target-number" id="targetNum">0</div>
+    <div class="module" id="mod-binary">
+        <div class="instruction" id="bin-inst">Sesuaikan sakelar agar mencapai tegangan target.</div>
+        <div class="bin-target" id="bin-target">0</div>
+        <div class="bin-switches" id="bin-switches"></div>
+        <button class="btn-action" onclick="checkBinary()">Retas Jaringan</button>
     </div>
 
-    <div class="switches-container" id="switchesContainer"></div>
+    <div class="module" id="mod-cipher">
+        <div class="instruction" id="cip-inst">Dekripsi pesan rahasia berikut.</div>
+        
+        <div class="alphabet-tape">
+            A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+        </div>
+        
+        <div class="cipher-box" id="cip-text">XXX</div>
+        <input type="text" class="cipher-input" id="cip-input" placeholder="MASUKKAN KATA ASLI..." autocomplete="off">
+        <button class="btn-action" style="background:#facc15; color:#000;" onclick="checkCipher()">Dekripsi Data</button>
+    </div>
 
-    <button class="btn-hack" id="btnHack" onclick="attemptHack()">BUKA BRANKAS</button>
-    <div id="statusMsg"></div>
+    <div class="module" id="mod-sort">
+        <div class="instruction" id="srt-inst">Urutkan sektor memori dari terkecil ke terbesar. Klik 2 blok untuk menukar.</div>
+        <div style="font-weight:bold; color:#ef4444; margin-bottom:10px;">Sisa Energi Tukar: <span id="srt-swaps">0</span></div>
+        <div class="sort-arr" id="srt-arr"></div>
+        <button class="btn-action" style="background:#ef4444; color:#fff;" onclick="resetSort()">Reset Urutan</button>
+    </div>
+
+    <div class="module" id="mod-logic">
+        <div class="instruction" id="log-inst">Nyalakan sirkuit agar persamaan bernilai TRUE.</div>
+        <div class="logic-eq" id="log-eq">EQ</div>
+        <div class="logic-gates" id="log-gates"></div>
+        <button class="btn-action" style="background:#8b5cf6; color:#fff;" onclick="checkLogic()">Jalankan Sirkuit</button>
+    </div>
+
+    <div class="module" id="mod-search">
+        <div class="instruction" id="sch-inst">Temukan IP rahasia. Gunakan algoritma Divide & Conquer (Bagi 2).</div>
+        <div style="font-weight:bold; color:#0ea5e9; margin-bottom:10px;">Sisa Percobaan: <span id="sch-lives">0</span></div>
+        <div class="search-log" id="sch-log"></div>
+        <div>
+            <input type="number" class="search-input" id="sch-input" placeholder="000">
+            <button class="btn-action" style="background:#0ea5e9; margin-left:10px;" onclick="checkSearch()">Tebak IP</button>
+        </div>
+    </div>
+
+    <div class="module" id="mod-parity">
+        <div class="instruction" id="par-inst">Deteksi Eror! Jumlah angka '1' di setiap baris dan kolom harus GENAP. Cari dan klik 1 bit yang dirusak virus!</div>
+        <div class="parity-grid" id="par-grid"></div>
+    </div>
+
+    <div id="sysMsg">Menunggu inisiasi sistem...</div>
 </div>
 
 <script>
-    // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT ANDA
+    // URL GOOGLE SHEETS ASLI ANDA
     const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDJiF5SwLJUBxBAQIXYAqM4ubxc-QIwuEn-rpWF8eDVd62muj9YDddACvDBR6lSPXa/exec";
 
+    // ==========================================
+    // DATABASE 25 LEVEL
+    // ==========================================
     const LEVELS = [
-        { title: "Level 1: Pemula (3-Bit)", bits: [4, 2, 1], target: 3 },
-        { title: "Level 2: Kombinasi Genap", bits: [4, 2, 1], target: 6 },
-        { title: "Level 3: Beban Penuh", bits: [4, 2, 1], target: 7 },
-        { title: "Level 4: Masuk ke 4-Bit", bits: [8, 4, 2, 1], target: 9 },
-        { title: "Level 5: Angka Belasan", bits: [8, 4, 2, 1], target: 12 },
-        { title: "Level 6: Angka Ganjil", bits: [8, 4, 2, 1], target: 11 },
-        { title: "Level 7: Maksimal 4-Bit", bits: [8, 4, 2, 1], target: 15 },
-        { title: "Level 8: Ruang 5-Bit", bits: [16, 8, 4, 2, 1], target: 18 },
-        { title: "Level 9: Kombinasi Tengah", bits: [16, 8, 4, 2, 1], target: 22 },
-        { title: "Level 10: Angka Prima", bits: [16, 8, 4, 2, 1], target: 29 },
-        { title: "Level 11: Nyaris Penuh", bits: [16, 8, 4, 2, 1], target: 27 },
-        { title: "Level 12: Area 6-Bit", bits: [32, 16, 8, 4, 2, 1], target: 34 },
-        { title: "Level 13: Celah Keamanan", bits: [32, 16, 8, 4, 2, 1], target: 45 },
-        { title: "Level 14: Angka Kembar", bits: [32, 16, 8, 4, 2, 1], target: 55 },
-        { title: "Level 15: Grand Master Hacker", bits: [32, 16, 8, 4, 2, 1], target: 61 },
-        { title: "Level 16: Gerbang 7-Bit", bits: [64, 32, 16, 8, 4, 2, 1], target: 65 }, 
-        { title: "Level 17: Tiga Digit Pertama", bits: [64, 32, 16, 8, 4, 2, 1], target: 100 }, 
-        { title: "Level 18: Logika Rumit", bits: [64, 32, 16, 8, 4, 2, 1], target: 115 }, 
-        { title: "Level 19: Hampir Penuh (7-Bit)", bits: [64, 32, 16, 8, 4, 2, 1], target: 126 }, 
-        { title: "Level 20: Memasuki 1 Byte!", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 130 }, 
-        { title: "Level 21: Pola Biner Zig-Zag", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 170 }, 
-        { title: "Level 22: Klub Dua Ratus", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 200 }, 
-        { title: "Level 23: Angka Misteri", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 213 }, 
-        { title: "Level 24: Pertahanan Ketat", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 240 }, 
-        { title: "Level 25: DEWA HACKER", bits: [128, 64, 32, 16, 8, 4, 2, 1], target: 254 } 
+        // GELOMBANG 1: PEMULA (Level 1-5)
+        { mod: 'binary', title: "Pemula Biner", target: 9, bits: [8,4,2,1], inst: "Gerbang 4-bit dasar. Buat angka 9." },
+        { mod: 'cipher', title: "Sandi Caesar Awal", text: "KDOOR", ans: "HALLO", inst: "Kata asli dikunci dengan menggeser 3 huruf ke KANAN (A &rarr; D). <br><strong style='color:#facc15;'>Untuk membuka:</strong> Geser sandi 3 huruf kembali ke KIRI (D &rarr; A)." },
+        { mod: 'sort', title: "Memori Berantakan", arr: [4, 1, 3], swaps: 3, inst: "Urutkan angka dari kecil ke besar. Tukar maksimal 3 kali." },
+        { mod: 'search', title: "Pencarian Biner", range: 50, lives: 6, inst: "Sistem menyembunyikan Angka Rahasia (1 sampai 50). Sistem akan menjawab 'Terlalu Besar' atau 'Terlalu Kecil'. Selalu tebak nilai tengahnya!" },
+        { mod: 'parity', title: "Deteksi Virus (3x3)", size: 3, inst: "Detektif Eror: Hitung jumlah angka '1'. Cari baris mendatar dan kolom menurun yang jumlah angka '1'-nya GANJIL. Klik titik persimpangannya!" },
+        
+        // GELOMBANG 2: MENENGAH (Level 6-11)
+        { mod: 'logic', title: "Sirkuit AND-OR", vars: ['A','B'], eq: "(A AND B)", check: (v) => v.A && v.B, inst: "Nyalakan sakelar agar (A dan B) menjadi aktif." },
+        { mod: 'binary', title: "Gerbang 5-Bit", target: 21, bits: [16,8,4,2,1], inst: "Level 5-bit. Buat angka 21." },
+        { mod: 'cipher', title: "Enkripsi Minus", text: "ZCLAG", ans: "BENCI", inst: "Kata asli dikunci dengan menggeser 2 huruf ke KIRI (C &rarr; A). <br><strong style='color:#facc15;'>Untuk membuka:</strong> Geser sandi 2 huruf kembali ke KANAN (A &rarr; C)." },
+        { mod: 'sort', title: "Efisiensi Selection", arr: [8, 2, 5, 1], swaps: 3, inst: "Awas! Hanya 3 energi. Jangan tukar sembarangan." },
+        { mod: 'search', title: "Skala Ratusan", range: 100, lives: 7, inst: "Area membesar. Tebak angka 1-100 dengan 7 nyawa." },
+        { mod: 'parity', title: "Matriks 4x4", size: 4, inst: "Detektif Eror: Hitung jumlah angka '1'. Cari baris mendatar dan kolom menurun yang jumlah angka '1'-nya GANJIL. Klik titik persimpangannya!" },
+
+        // GELOMBANG 3: LANJUTAN (Level 12-18)
+        { mod: 'logic', title: "Logika NOT", vars: ['A','B'], eq: "(A OR B) AND (NOT A)", check: (v) => (v.A || v.B) && (!v.A), inst: "Persamaan rumit: Nyalakan sakelar B, tapi pastikan sakelar A tetap MATI." },
+        { mod: 'binary', title: "Gerbang 6-Bit", target: 45, bits: [32,16,8,4,2,1], inst: "Kombinasi 45 menggunakan 6 sakelar." },
+        { mod: 'cipher', title: "Blind Cipher", text: "KOMPUTER", ans: "KOMPUTER", inst: "Terkadang sistem mengecohmu. Sandi ini bergeser 0 langkah (Tidak bergeser sama sekali). Ketik ulang saja!" },
+        { mod: 'logic', title: "Sirkuit 3 Variabel", vars: ['A','B','C'], eq: "(A AND B) OR C", check: (v) => (v.A && v.B) || v.C, inst: "Ada 3 input. Temukan salah satu kombinasi yang menghasilkan TRUE." },
+        { mod: 'search', title: "Sistem Kritis", range: 300, lives: 9, inst: "Tebak angka 1-300. 9 nyawa cukup jika kamu menggunakan rumus membagi dua!" },
+        { mod: 'parity', title: "Database 5x5", size: 5, inst: "Sangat menuntut ketelitian mata. Cari 1 eror di matriks 5x5." },
+
+        // GELOMBANG 4: HACKER (Level 19-24)
+        { mod: 'binary', title: "Byte Pertama", target: 170, bits: [128,64,32,16,8,4,2,1], inst: "Memasuki 8-bit penuh. Buat angka 170 (Pola rahasia)." },
+        { mod: 'cipher', title: "Shift Rahasia", text: "VWDWXV", ans: "STATUS", inst: "Kata asli dikunci bergeser 3 huruf ke KANAN (A &rarr; D). <br><strong style='color:#facc15;'>Untuk membuka:</strong> Tarik mundur ke KIRI (-3)." },
+        { mod: 'sort', title: "Pengurutan Ekstrem", arr: [12, 4, 25, 2, 8, 1], swaps: 5, inst: "Hanya 5 energi untuk 6 angka! Pindahkan yang terkecil langsung ke depan." },
+        { mod: 'logic', title: "Gerbang Kompleks", vars: ['A','B','C'], eq: "A AND (B OR NOT C)", check: (v) => v.A && (v.B || !v.C), inst: "Hanya ahli logika yang bisa menebak ini." },
+        { mod: 'search', title: "Jarum di Jerami", range: 1000, lives: 15, inst: "1-1000 dengan 10 nyawa. Ini adalah batas maksimal logaritma basis 2!" },
+        { mod: 'parity', title: "The Wall of Bits", size: 6, inst: "Mata elang dibutuhkan. Matriks 6x6." },
+
+        // BOSS LEVEL (Level 25)
+        { mod: 'binary', title: "DEWA HACKER", target: 254, bits: [128,64,32,16,8,4,2,1], inst: "Pintu terakhir. Nyalakan sistem dengan target 254!" }
     ];
 
-    let currentLevelIndex = 0;
-    let currentLevelData = null;
-    let switchStates = []; 
-    let currentSum = 0;
+    // --- SISTEM INTI & VARIABEL LEADERBOARD ---
+    let currentLvlIdx = 0;
+    let studentName = "Siswa";
+    const LCL_KEY = "cvault_level_";
     
-    let startTime = 0;
+    // Variabel Skor & Waktu
+    let levelStartTime = 0;
     let failsCount = 0;
     let totalGameScore = 0;
 
-    window.onload = function() {
-        // Ambil nama dari portal utama
-        const savedName = localStorage.getItem('globalPlayerName');
+    window.onload = () => {
+        studentName = localStorage.getItem('globalPlayerName') || "Hacker_Baru";
+        document.getElementById('playerName').textContent = studentName;
         
-        // Jika nama tidak ada, tendang balik ke index
-        if (!savedName || savedName === "") {
-            alert("Silakan masukkan namamu di halaman utama terlebih dahulu!");
-            window.location.href = "index.html"; return;
-        } else {
-            document.getElementById('displayName').textContent = savedName;
-        }
+        let savedLvl = localStorage.getItem(LCL_KEY + studentName);
+        if(savedLvl) currentLvlIdx = parseInt(savedLvl);
 
-        // --- SISTEM CHECKPOINT BINER ---
-        let savedLevel = localStorage.getItem('biner_level_' + savedName);
-        let savedScore = localStorage.getItem('biner_score_' + savedName);
-
+        let savedScore = localStorage.getItem('cvault_score_' + studentName);
         if (savedScore) totalGameScore = parseInt(savedScore);
-        let levelToLoad = savedLevel ? parseInt(savedLevel) : 0;
-
-        loadLevel(levelToLoad);
+        
+        loadLevel();
     };
 
-    // Fungsi Langsung Lompat Level (Dipanggil oleh Tombol Lanjut)
-    function jumpToLevel(index) {
-        currentLevelIndex = parseInt(index);
-        loadLevel(currentLevelIndex);
-    }
-
-    function loadLevel(index) {
-        if (index >= LEVELS.length) {
-            alert("Luar Biasa! Anda telah menamatkan seluruh level Brankas Biner!");
-            // Reset ke awal jika sudah tamat
-            index = 0; currentLevelIndex = 0; 
-        }
-
-        currentLevelData = LEVELS[index];
-        switchStates = new Array(currentLevelData.bits.length).fill(0);
-        
-        startTime = Date.now();
-        failsCount = 0;
-        
-        document.getElementById('targetNum').textContent = currentLevelData.target;
-        
-        // Update Teks Indikator Level
-        document.getElementById('levelDisplay').textContent = currentLevelData.title;
-        
-        document.getElementById('statusMsg').textContent = "";
-        
-        const btnHack = document.getElementById('btnHack');
-        btnHack.textContent = "BUKA BRANKAS";
-        btnHack.style.backgroundColor = "#0ea5e9";
-        btnHack.onclick = attemptHack;
-
-        document.getElementById('vaultScreen').classList.remove('shake', 'unlocked');
-
-        renderSwitches();
-        calculateState();
-    }
-
-    function renderSwitches() {
-        const container = document.getElementById('switchesContainer');
-        container.innerHTML = '';
-        currentLevelData.bits.forEach((bitValue, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'switch-wrapper';
-
-            const label = document.createElement('div');
-            label.className = 'bit-value';
-            label.id = `label-${index}`;
-            label.textContent = bitValue;
-
-            const btn = document.createElement('button');
-            btn.className = 'btn-switch';
-            btn.id = `switch-${index}`;
-            btn.textContent = switchStates[index];
-            btn.onclick = () => toggleSwitch(index);
-
-            wrapper.appendChild(label);
-            wrapper.appendChild(btn);
-            container.appendChild(wrapper);
-        });
-    }
-
-    function toggleSwitch(index) {
-        switchStates[index] = switchStates[index] === 0 ? 1 : 0;
-        const btn = document.getElementById(`switch-${index}`);
-        btn.textContent = switchStates[index];
-        if (switchStates[index] === 1) {
-            btn.classList.add('on');
-            document.getElementById(`label-${index}`).classList.add('active');
-        } else {
-            btn.classList.remove('on');
-            document.getElementById(`label-${index}`).classList.remove('active');
-        }
-        calculateState();
-    }
-
-    function calculateState() {
-        currentSum = 0;
-        for (let i = 0; i < currentLevelData.bits.length; i++) {
-            if (switchStates[i] === 1) currentSum += currentLevelData.bits[i];
-        }
-        document.getElementById('statusMsg').textContent = "";
-        document.getElementById('vaultScreen').classList.remove('shake');
-    }
-
-    function attemptHack() {
-        const vault = document.getElementById('vaultScreen');
-        const msg = document.getElementById('statusMsg');
-        
-        if (currentSum === currentLevelData.target) {
-            vault.classList.add('unlocked');
-            msg.textContent = "✅ Akses Diberikan! Kode Biner Diterima.";
-            msg.style.color = "#fef08a";
-            
-            sendDataToGuru(); 
-            
-            const btn = document.getElementById('btnHack');
-            btn.textContent = "LANJUT KE LEVEL BERIKUTNYA ➔";
-            btn.style.backgroundColor = "#10b981";
-            btn.onclick = () => jumpToLevel(currentLevelIndex + 1);
-        } else {
-            failsCount++; 
-            vault.classList.remove('shake');
-            void vault.offsetWidth; 
-            vault.classList.add('shake');
-            
-            msg.textContent = `❌ Akses Ditolak! Kombinasi biner salah.`;
-            msg.style.color = "#ef4444";
+    function resetData() {
+        if(confirm("Yakin ingin menghapus progres dan mulai dari Level 1?")) {
+            localStorage.removeItem(LCL_KEY + studentName);
+            localStorage.removeItem('cvault_score_' + studentName);
+            currentLvlIdx = 0; 
+            totalGameScore = 0;
+            loadLevel();
         }
     }
 
-    function sendDataToGuru() {
-        let playerName = document.getElementById('displayName').textContent;
-        // Mengambil data kelas dari memori (agar tidak error) 
+    // Trik Cerdas: Setiap kali muncul pesan "error" (merah), otomatis jumlah gagal bertambah!
+    function msg(text, type="info") {
+        const m = document.getElementById('sysMsg');
+        m.textContent = "> " + text;
+        m.style.color = type === "error" ? "#ef4444" : type === "success" ? "#10b981" : "#38bdf8";
+        if (type === "error") failsCount++; 
+    }
+
+    function triggerShake(modId) {
+        let el = document.getElementById(modId);
+        el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    }
+
+    // --- FUNGSI MENGIRIM DATA KE GOOGLE SHEETS ---
+    function sendDataToGuru(timeTakenSeconds) {
         let playerClass = localStorage.getItem('globalPlayerClass') || "Tanpa Kelas"; 
         
-        let timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        
-        // KALIBRASI SKOR BINER: Max 40 Poin per Level
-        let baseScore = 40; 
-        let penalty = Math.floor(timeTaken / 5) + (failsCount * 3);
-        let levelScore = Math.max(5, baseScore - penalty);
-        
-        // Akumulasikan!
-        totalGameScore += levelScore;
-
-        // Simpan Checkpoint ke memori HP 
-        localStorage.setItem('biner_level_' + playerName, currentLevelIndex + 1);
-        localStorage.setItem('biner_score_' + playerName, totalGameScore);
-
+        // Kemas data dengan KUNCI YANG SAMA PERSIS dengan Brankas Biner
         let record = {
-            name: playerName,
+            name: studentName,
             className: playerClass, 
             gameName: "Brankas Biner", 
-            level: currentLevelData.title,
+            level: LEVELS[currentLvlIdx].title,
             steps: 0, 
             fails: failsCount,
             deletions: 0,
-            time: timeTaken,
+            time: timeTakenSeconds,
             score: totalGameScore 
         };
 
@@ -285,6 +236,242 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(record)
         }).catch(err => console.error(err));
+    }
+
+    function levelComplete() {
+        msg("AKSES DIBERIKAN! Membuka protokol berikutnya...", "success");
+        
+        // 1. Kalkulasi Skor & Waktu (Persis seperti Brankas Biner)
+        let timeTaken = Math.floor((Date.now() - levelStartTime) / 1000);
+        let baseScore = 40; 
+        let penalty = Math.floor(timeTaken / 5) + (failsCount * 3);
+        let levelScore = Math.max(5, baseScore - penalty);
+        totalGameScore += levelScore;
+
+        // 2. Simpan skor ke memori HP
+        localStorage.setItem('cvault_score_' + studentName, totalGameScore);
+
+        // 3. 🚀 KIRIM DATA KE GOOGLE SHEETS SETIAP KALI LULUS LEVEL!
+        sendDataToGuru(timeTaken);
+
+        currentLvlIdx++;
+        localStorage.setItem(LCL_KEY + studentName, currentLvlIdx);
+        
+        if (currentLvlIdx >= LEVELS.length) {
+            setTimeout(() => {
+                document.querySelector('.terminal').innerHTML = `
+                    <h1 style="color:#10b981; font-size:36px; text-align:center;">SYSTEM HACKED!</h1>
+                    <p style="text-align:center; color:#e2e8f0; font-size:18px;">Luar biasa! Kamu telah menamatkan CYBER-VAULT dengan Skor: <strong>${totalGameScore}</strong>!</p>
+                `;
+            }, 1500);
+        } else {
+            setTimeout(loadLevel, 1500);
+        }
+    }
+
+    function loadLevel() {
+        document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+        let lvl = LEVELS[currentLvlIdx];
+        
+        document.getElementById('lvlBadge').textContent = `LEVEL ${currentLvlIdx + 1}/25`;
+        document.querySelector('.title-area h1').textContent = lvl.title;
+        
+        const modEl = document.getElementById('mod-' + lvl.mod);
+        modEl.classList.add('active');
+        
+        modEl.querySelector('.instruction').innerHTML = lvl.inst;
+        
+        // Reset waktu dan jumlah gagal untuk level baru ini
+        levelStartTime = Date.now();
+        failsCount = 0;
+        msg("Menunggu input operator...", "info");
+
+        if (lvl.mod === 'binary') initBinary(lvl);
+        else if (lvl.mod === 'cipher') initCipher(lvl);
+        else if (lvl.mod === 'sort') initSort(lvl);
+        else if (lvl.mod === 'logic') initLogic(lvl);
+        else if (lvl.mod === 'search') initSearch(lvl);
+        else if (lvl.mod === 'parity') initParity(lvl);
+    }
+
+    // ==========================================
+    // MESIN MODUL 1: BINER
+    // ==========================================
+    let binState = [];
+    function initBinary(lvl) {
+        document.getElementById('bin-target').textContent = lvl.target;
+        const cont = document.getElementById('bin-switches');
+        cont.innerHTML = ''; binState = new Array(lvl.bits.length).fill(0);
+        
+        lvl.bits.forEach((val, i) => {
+            cont.innerHTML += `<div class="bit-wrap"><div class="bit-val">${val}</div><button class="btn-switch" id="binb-${i}" onclick="toggleBin(${i})">0</button></div>`;
+        });
+    }
+    function toggleBin(i) {
+        binState[i] = 1 - binState[i];
+        let btn = document.getElementById(`binb-${i}`);
+        btn.textContent = binState[i];
+        binState[i] ? btn.classList.add('on') : btn.classList.remove('on');
+    }
+    function checkBinary() {
+        let sum = 0, lvl = LEVELS[currentLvlIdx];
+        for(let i=0; i<lvl.bits.length; i++) if(binState[i]) sum += lvl.bits[i];
+        if(sum === lvl.target) levelComplete();
+        else { msg(`Tegangan salah: ${sum}. Target: ${lvl.target}`, "error"); triggerShake('mod-binary'); }
+    }
+
+    // ==========================================
+    // MESIN MODUL 2: CIPHER
+    // ==========================================
+    function initCipher(lvl) {
+        document.getElementById('cip-text').textContent = lvl.text;
+        document.getElementById('cip-input').value = "";
+    }
+    function checkCipher() {
+        let ans = document.getElementById('cip-input').value.trim().toUpperCase();
+        if(ans === LEVELS[currentLvlIdx].ans) levelComplete();
+        else { msg("Sandi Ditolak!", "error"); triggerShake('mod-cipher'); }
+    }
+
+    // ==========================================
+    // MESIN MODUL 3: SORTING
+    // ==========================================
+    let srtArr = []; let srtSwaps = 0; let srtSel = null;
+    function initSort(lvl) {
+        srtArr = [...lvl.arr]; srtSwaps = lvl.swaps; srtSel = null;
+        renderSort();
+    }
+    function renderSort() {
+        document.getElementById('srt-swaps').textContent = srtSwaps;
+        const cont = document.getElementById('srt-arr'); cont.innerHTML = '';
+        srtArr.forEach((num, i) => {
+            let b = document.createElement('div'); b.className = 'sort-block';
+            if(i === srtSel) b.classList.add('selected');
+            b.textContent = num; b.onclick = () => doSort(i);
+            cont.appendChild(b);
+        });
+    }
+    function doSort(i) {
+        if(srtSwaps <= 0) return msg("Energi habis! Silakan Reset.", "error");
+        if(srtSel === null) { srtSel = i; renderSort(); }
+        else if(srtSel === i) { srtSel = null; renderSort(); }
+        else {
+            [srtArr[srtSel], srtArr[i]] = [srtArr[i], srtArr[srtSel]];
+            srtSwaps--; srtSel = null; renderSort();
+            let isSorted = srtArr.every((v, k) => k === srtArr.length - 1 || v < srtArr[k + 1]);
+            if(isSorted) levelComplete();
+            else if(srtSwaps === 0) { msg("Gagal urut! Energi habis.", "error"); triggerShake('mod-sort'); }
+        }
+    }
+    function resetSort() { initSort(LEVELS[currentLvlIdx]); msg("Memori direset.", "info"); }
+
+    // ==========================================
+    // MESIN MODUL 4: LOGIK GATES
+    // ==========================================
+    let logVars = {};
+    function initLogic(lvl) {
+        document.getElementById('log-eq').innerHTML = lvl.eq.replace(/AND/g, '<strong style="color:#10b981">AND</strong>').replace(/OR/g, '<strong style="color:#38bdf8">OR</strong>').replace(/NOT/g, '<strong style="color:#ef4444">NOT</strong>');
+        const cont = document.getElementById('log-gates'); cont.innerHTML = ''; logVars = {};
+        lvl.vars.forEach(v => {
+            logVars[v] = false;
+            cont.innerHTML += `<button class="logic-btn" id="lbtn-${v}" onclick="toggleLogic('${v}')">${v}: OFF</button>`;
+        });
+    }
+    function toggleLogic(v) {
+        logVars[v] = !logVars[v];
+        let b = document.getElementById(`lbtn-${v}`);
+        b.textContent = `${v}: ${logVars[v] ? 'ON' : 'OFF'}`;
+        logVars[v] ? b.classList.add('on') : b.classList.remove('on');
+    }
+    function checkLogic() {
+        if(LEVELS[currentLvlIdx].check(logVars)) levelComplete();
+        else { msg("Kondisi bernilai FALSE!", "error"); triggerShake('mod-logic'); }
+    }
+
+    // ==========================================
+    // MESIN MODUL 5: BINARY SEARCH
+    // ==========================================
+    let schTarget = 0; let schLives = 0;
+    function initSearch(lvl) {
+        schTarget = Math.floor(Math.random() * lvl.range) + 1;
+        schLives = lvl.lives;
+        document.getElementById('sch-lives').textContent = schLives;
+        document.getElementById('sch-log').innerHTML = "> Sistem memilih IP rahasia...<br>";
+        document.getElementById('sch-input').value = "";
+        document.getElementById('sch-input').placeholder = `1-${lvl.range}`;
+    }
+    function checkSearch() {
+        if(schLives <= 0) return;
+        
+        let inputEl = document.getElementById('sch-input');
+        let v = parseInt(inputEl.value);
+        
+        if(isNaN(v)) {
+            msg("Masukkan angka tebakanmu dulu di kotak!", "error");
+            triggerShake('mod-search');
+            return;
+        }
+        
+        let log = document.getElementById('sch-log');
+        if (v === schTarget) {
+            log.innerHTML += `<br><span style="color:#10b981">>> IP [${v}] BENAR! Akses Diberikan.</span>`;
+            log.scrollTop = log.scrollHeight; levelComplete();
+        } else {
+            schLives--; document.getElementById('sch-lives').textContent = schLives;
+            let hint = v > schTarget ? "Terlalu BESAR" : "Terlalu KECIL";
+            log.innerHTML += `<br><span style="color:#ef4444">>> IP [${v}] Salah. Hint: ${hint}</span>`;
+            log.scrollTop = log.scrollHeight;
+            if(schLives <= 0) {
+                log.innerHTML += `<br>Sistem Terkunci. Rahasianya adalah ${schTarget}. Reset untuk mencoba lagi.`;
+                msg("Nyawa habis! Gagal menebak.", "error"); triggerShake('mod-search');
+                setTimeout(() => initSearch(LEVELS[currentLvlIdx]), 3000);
+            }
+        }
+        inputEl.value = "";
+    }
+
+    // ==========================================
+    // MESIN MODUL 6: PARITY BIT (DETEKSI EROR)
+    // ==========================================
+    let parGrid = []; let parTargetR = 0; let parTargetC = 0;
+    function initParity(lvl) {
+        let size = lvl.size;
+        parGrid = Array(size).fill().map(() => Array(size).fill(0));
+        
+        for(let r=0; r<size-1; r++) {
+            let rowSum = 0;
+            for(let c=0; c<size-1; c++) {
+                let val = Math.random() > 0.5 ? 1 : 0;
+                parGrid[r][c] = val; rowSum += val;
+            }
+            parGrid[r][size-1] = rowSum % 2 === 0 ? 0 : 1; 
+        }
+        for(let c=0; c<size; c++) {
+            let colSum = 0;
+            for(let r=0; r<size-1; r++) colSum += parGrid[r][c];
+            parGrid[size-1][c] = colSum % 2 === 0 ? 0 : 1; 
+        }
+        
+        parTargetR = Math.floor(Math.random() * size);
+        parTargetC = Math.floor(Math.random() * size);
+        parGrid[parTargetR][parTargetC] = 1 - parGrid[parTargetR][parTargetC]; 
+
+        const cont = document.getElementById('par-grid');
+        cont.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+        cont.innerHTML = '';
+        for(let r=0; r<size; r++) {
+            for(let c=0; c<size; c++) {
+                cont.innerHTML += `<div class="parity-cell" onclick="checkParity(${r},${c})">${parGrid[r][c]}</div>`;
+            }
+        }
+    }
+    function checkParity(r, c) {
+        if(r === parTargetR && c === parTargetC) {
+            levelComplete();
+        } else {
+            msg(`Bit baris ${r+1} kolom ${c+1} BUKAN virusnya. Hitung ulang!`, "error");
+            triggerShake('mod-parity');
+        }
     }
 </script>
 </body>
