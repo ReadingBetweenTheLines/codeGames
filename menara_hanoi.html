@@ -285,6 +285,7 @@
 
     function sendDataToGuru() {
         let playerName = document.getElementById('displayName').textContent;
+        let playerClass = localStorage.getItem('globalPlayerClass') || "tanpa kelas"
         let timeTakenSeconds = Math.floor((Date.now() - startTime) / 1000);
         
         let minMoves = Math.pow(2, numRings) - 1;
